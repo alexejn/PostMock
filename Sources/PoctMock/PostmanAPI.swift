@@ -1,11 +1,10 @@
-import UIKit
-import HTTPTypes
+import Foundation
 
 private extension URLRequest.Config {
   static var postman: Self  {
     var config = Self.default
     config.host = "api.getpostman.com"
-    config.headers[.Postman.xApiKey] = PostMock.shared.config.apiKey
+    config.headers[PostMock.Headers.xApiKey] = PostMock.shared.config.apiKey
     return config
   }
 }

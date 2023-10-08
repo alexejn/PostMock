@@ -17,7 +17,7 @@ struct CurrentMocksView: View {
       .padding(.horizontal)
     }
     .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
+      ToolbarItem(placement: .rightCorner) {
         Button("Clear", action: {
           mocks.clearAll()
         })

@@ -5,7 +5,6 @@ struct ContentView: View {
   var body: some View {
     NavigationView {
       CategoriesListView()
-        .postMockOnShake()
     }
     .onAppear {
       PostMock.shared.configurate(with: .myConfig)

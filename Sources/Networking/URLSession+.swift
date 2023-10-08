@@ -1,20 +1,17 @@
-import HTTPTypes
-import HTTPTypesFoundation
 import Foundation
 
 extension URLSession {
 
-  public struct DataResponse {
-    public let request: URLRequest
-    public let response: HTTPResponse
-    public let data: Data
-
-    public var status: HTTPResponse.Status { response.status }
-    public var fields: HTTPFields { response.headerFields }
+  struct DataResponse {
+    let request: URLRequest
+    let response: HTTPURLResponse
+    let data: Data
+    let status: URLResponse.Status
+    let fields: [String: String]
   }
 
   struct RequestAuthorizer {
-    public typealias Authorizer = (inout URLRequest) async throws -> Void
+    typealias Authorizer = (inout URLRequest) async throws -> Void
     private let authorizer: Authorizer
 
     init(_ authorizer: @escaping Authorizer) {
@@ -27,14 +24,14 @@ extension URLSession {
   }
 
   struct Config {
-    public var authorize: Bool = true
-    public var authorizer: RequestAuthorizer?
+    var authorize: Bool = true
+    var authorizer: RequestAuthorizer?
 
-    public static var `default` = Config()
+    static var `default` = Config()
   }
 
-  private enum HTTPTypeConversionError: Error {
-    case failedToConvertURLResponseToHTTPResponse
+  private enum InternalError: Error {
+    case failedToConvertURLResponseToHTTPURLResponse
   }
 
   @discardableResult
@@ -57,14 +54,16 @@ extension URLSession {
 
     let (data, urlResponse) = try await session.data(for: request)
 
-    guard let response = (urlResponse as? HTTPURLResponse)?.httpResponse else {
-      throw HTTPTypeConversionError.failedToConvertURLResponseToHTTPResponse
+    guard let response = urlResponse as? HTTPURLResponse else {
+      throw InternalError.failedToConvertURLResponseToHTTPURLResponse
     }
 
 
     let dataResponse = DataResponse(request: request,
                                     response: response,
-                                    data: data)
+                                    data: data,
+                                    status: .init(code: response.statusCode),
+                                    fields: (response.allHeaderFields as? [String: String]) ?? [:])
 
 
     return dataResponse
@@ -77,15 +76,10 @@ extension URLSession.DataResponse {
       return try decoder.decode(type, from: data)
     } catch {
       if let callId = request.callID {
-        PostMock.shared.decodeError(callID: callId.uuidString, error: error)
+        PostMock.shared.decodeError(callID: callId, error: error)
       }
       throw error
     }
   }
 }
 
-extension HTTPResponse.Status {
-  var statusDescription: String {
-    reasonPhrase.isEmpty ? HTTPURLResponse.localizedString(forStatusCode: code) : reasonPhrase
-  }
-}

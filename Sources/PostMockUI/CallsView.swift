@@ -71,7 +71,7 @@ struct CallsView: View {
       .padding(.horizontal)
     }
     .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
+      ToolbarItem(placement: .rightCorner) {
         Button("Clear", action: {
           Task {
             await dictionary.clear()

@@ -7,12 +7,6 @@ struct PostmanSettingsView: View {
     Form {
       Section {
         NavigationLink {
-          CallsView()
-        } label: {
-          Text("All calls")
-        }
-
-        NavigationLink {
           CurrentMocksView()
             .environmentObject(PostmanRequestsMocks.shared)
         } label: {

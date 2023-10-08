@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 private struct PostMockViewModifier: ViewModifier {
   @State private var viewVisible = false
 
@@ -19,3 +20,4 @@ public extension View {
     modifier(PostMockViewModifier())
   }
 }
+#endif

@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 extension UIDevice {
     static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
@@ -31,3 +32,4 @@ struct DeviceShakeViewModifier: ViewModifier {
             }
     }
 }
+#endif

@@ -18,11 +18,18 @@ final class RequestDetailViewModel: ObservableObject {
   }
 
   func openLink() {
+#if os(iOS)
     UIApplication.shared.open(URL.linkToPostman(requestID: item.id))
+#endif
   }
 
   func copyToClipboard() {
+#if os(macOS)
+    NSPasteboard.general.setString(item.uid, forType: .string)
+#endif
+#if os(iOS)
     UIPasteboard.general.string = item.uid
+#endif
   }
 }
 

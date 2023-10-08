@@ -67,17 +67,17 @@ public struct PostMockView: View {
       }
       .toolbar {
 
-        ToolbarItem(placement: .navigationBarLeading) {
+        ToolbarItem(placement: .leftCorner) {
           Toggle("Mock", isOn: $model.mockIsEnabled)
             .toggleStyle(SwitchToggleStyle(tint: Color.blue))
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .rightCorner) {
           ReloadButton(isLoading: model.isLoading,
                        reload: model.reload)
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .rightCorner) {
           NavigationLink {
             CallsView()
               .environmentObject(model)
@@ -88,7 +88,7 @@ public struct PostMockView: View {
         }
 
 
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .rightCorner) {
           NavigationLink {
             PostmanSettingsView()
               .environmentObject(model)
@@ -100,7 +100,9 @@ public struct PostMockView: View {
       }
       .environmentObject(model)
       .environmentObject(mocks)
+#if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
+#endif
       .onFirstAppear {
         Task { @MainActor in
           guard !model.isLoaded else { return }
@@ -108,6 +110,26 @@ public struct PostMockView: View {
         }
       }
     }
+  }
+}
+
+extension ToolbarItemPlacement {
+  static var rightCorner: ToolbarItemPlacement {
+    #if os(iOS)
+    return .navigationBarTrailing
+    #endif
+    #if os(macOS)
+    return .confirmationAction
+    #endif
+  }
+
+  static var leftCorner: ToolbarItemPlacement {
+    #if os(iOS)
+    return .navigationBarLeading
+    #endif
+    #if os(macOS)
+    return .primaryAction
+    #endif
   }
 }
 

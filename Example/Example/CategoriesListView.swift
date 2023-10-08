@@ -64,7 +64,7 @@ struct CategoriesListView: View {
       }
       .navigationTitle("Select a category")
       .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .rightCorner) {
           Button("Random1") {
             Task {
               await model.random1()
@@ -72,7 +72,7 @@ struct CategoriesListView: View {
           }
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .rightCorner) {
           Button("Random2") {
             Task {
               await model.random2()
@@ -80,7 +80,7 @@ struct CategoriesListView: View {
           }
         }
 
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .leftCorner) {
           Button("PostMock") {
             postMockViewPresented.toggle()
           }
@@ -105,7 +105,7 @@ struct CategoriesListView: View {
   }
 }
 
-final class ViewModel: ObservableObject {
+final class ViewModel: NSObject, ObservableObject {
 
   @Published var categories: [String] = []
   @Published var entries: [Entry] = []
@@ -119,13 +119,20 @@ final class ViewModel: ObservableObject {
     }
   }
 
+  private lazy var customURLSession: URLSession = {
+    let configuration = URLSessionConfiguration.default
+    configuration.protocolClasses = [PostMockURLProtocol.self]
+    let urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    return urlSession
+  }()
+
   @Published var errorAlertIsPresented: Bool = false
 
   @MainActor
   func loadCategories() async  {
     defer { isLoading = false }
     isLoading = true
-    let req = HTTPRequest(method: .get, scheme: "https", authority: "api.publicapis.org", path: "/categories")
+    var req = URLRequest(url: URL(string: "https://api.publicapis.org/categories")!)
     do {
       let (data, _) = try await URLSession.shared.data(for: req)
       self.categories = try JSONDecoder().decode(CategoriesResponse.self, from: data).categories
@@ -137,11 +144,11 @@ final class ViewModel: ObservableObject {
   @MainActor
   func random1() async  {
     self.random = nil
-    var req = HTTPRequest(method: .get, scheme: "https", authority: "api.publicapis.org", path: "/random")
-    req.headerFields[.PostMock.xRequestId] = "1122734-94924c70-58df-482a-811d-ff1bb0b03edf"
+    var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
+    req.setValue("1122734-94924c70-58df-482a-811d-ff1bb0b03edf", forHTTPHeaderField: PostMock.Headers.xRequestId)
 
     do {
-      let (data, _) = try await URLSession.shared.data(for: req)
+      let (data, _) = try await customURLSession.data(for: req)
       self.random = try JSONDecoder().decode(EntriesResponse.self, from: data).entries.first
     } catch {
       errorMessage = "\(error)"
@@ -151,10 +158,10 @@ final class ViewModel: ObservableObject {
   @MainActor
   func random2() async  {
     self.random = nil
-    var req = HTTPRequest(method: .get, scheme: "https", authority: "api.publicapis.org", path: "/random")
-    req.headerFields[.PostMock.xRequestId] = "1122734-c5751f7c-7e38-42b0-82d4-7fcfb57fc79a"
+    var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
+    req.setValue("1122734-c5751f7c-7e38-42b0-82d4-7fcfb57fc79a", forHTTPHeaderField: PostMock.Headers.xRequestId)
     do {
-      let (data, _) = try await URLSession.shared.data(for: req)
+      let (data, _) = try await customURLSession.data(for: req)
       self.random = try JSONDecoder().decode(EntriesResponse.self, from: data).entries.first
     } catch {
       errorMessage = "\(error)"
@@ -166,13 +173,14 @@ final class ViewModel: ObservableObject {
     defer { isLoading = false }
     isLoading = true
     self.entries = []
-    var req = HTTPRequest(method: .get, scheme: "https", authority: "api.publicapis.org", path: "/entries?category=\(category)")
+
+    var req = URLRequest(url: URL(string: "https://api.publicapis.org/entries?category=\(category)")!)
     req.setCallId()
     do {
       let (data, _) = try await URLSession.shared.data(for: req)
       self.entries = try JSONDecoder().decode(EntriesResponse.self, from: data).entries
     } catch let error as DecodingError {
-      if let callId = req.headerFields[.PostMock.xCallId] {
+      if let callId = req.callID {
         PostMock.shared.decodeError(callID: callId, error: error)
       }
       errorMessage = "\(error)"
@@ -181,6 +189,10 @@ final class ViewModel: ObservableObject {
       errorMessage = "\(error)"
     }
   }
+
+}
+
+extension ViewModel: URLSessionDelegate {
 
 }
 
@@ -203,5 +215,25 @@ struct Entry: Decodable, Hashable, Identifiable {
     case api = "API"
     case description = "Description"
     case link = "Link"
+  }
+}
+
+extension ToolbarItemPlacement {
+  static var rightCorner: ToolbarItemPlacement {
+    #if os(iOS)
+    return .navigationBarTrailing
+    #endif
+    #if os(macOS)
+    return .confirmationAction
+    #endif
+  }
+
+  static var leftCorner: ToolbarItemPlacement {
+    #if os(iOS)
+    return .navigationBarLeading
+    #endif
+    #if os(macOS)
+    return .primaryAction
+    #endif
   }
 }

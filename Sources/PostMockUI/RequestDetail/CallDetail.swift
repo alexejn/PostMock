@@ -1,6 +1,5 @@
 import SwiftUI
 import Foundation
-import HTTPTypes
 
 private struct HeadersView: View {
   var headers: [String: String]?

@@ -62,11 +62,17 @@ struct CollectionView: View {
 
 private extension View {
   func sheetDefaultSettings() -> some View {
+#if os(iOS)
     if #available(iOS 16.0, *) {
       return presentationDetents([.medium, .large])
-    } else {
-      return self
-    }
+    } else { return self }
+#endif
+
+#if os(macOS)
+    if #available(macOS 13.0, *) {
+      return presentationDetents([.medium, .large])
+    } else { return self }
+#endif
   }
 }
 

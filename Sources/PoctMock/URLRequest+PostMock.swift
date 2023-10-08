@@ -1,5 +1,3 @@
-import HTTPTypes
-import HTTPTypesFoundation
 import Foundation
 
 extension URLRequest {
@@ -14,9 +12,9 @@ extension URLRequest {
 
     guard let mockResponseID = PostmanRequestsMocks.shared.mockResponseID(for: self) else { return false }
 
-    allHTTPHeaderFields?[.Postman.xMockResponseId] = mockResponseID
-    allHTTPHeaderFields?[.Postman.xApiKey] = PostMock.shared.config.apiKey
-    allHTTPHeaderFields?[.PostMock.xMockedHost] = host
+    setValue(mockResponseID, forHTTPHeaderField: PostMock.Headers.xMockResponseId)
+    setValue(PostMock.shared.config.apiKey, forHTTPHeaderField: PostMock.Headers.xApiKey)
+    setValue(host, forHTTPHeaderField: PostMock.Headers.xMockedHost)
 
     let urlWithMockHost = requestUrl.absoluteString.replacingOccurrences(of: host,
                                                                          with: mockServer.host)
@@ -27,21 +25,11 @@ extension URLRequest {
   @discardableResult
   public mutating func setCallId() -> String {
     let uuid = UUID().uuidString
-    allHTTPHeaderFields?[.PostMock.xCallId] = uuid
+    setValue(uuid, forHTTPHeaderField: PostMock.Headers.xCallId)
     return uuid
   }
 
-  public var callID: UUID? {
-    guard let stringUUID = allHTTPHeaderFields?[.PostMock.xCallId] else { return nil }
-    return UUID(uuidString: stringUUID)
-  }
-}
-
-extension HTTPRequest {
-  @discardableResult
-  public mutating func setCallId() -> String {
-    let uuid = UUID().uuidString
-    headerFields[.PostMock.xCallId] = uuid
-    return uuid
+  public var callID: String? {
+    value(forHTTPHeaderField: PostMock.Headers.xCallId)
   }
 }

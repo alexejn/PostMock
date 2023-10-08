@@ -1,7 +1,11 @@
-import HTTPTypes
 import Foundation
 
 extension URLRequest {
+
+  enum Method: String {
+    case get
+    case post
+  }
 
   /// Конифгуратор URL запроса
   struct Config {
@@ -16,9 +20,9 @@ extension URLRequest {
     /// Параметры которые необходимо передать в Body запроса
     public var bodyParams: [String: Any] = [:]
     /// Http метод запроса
-    public var method: HTTPRequest.Method = .get
+    public var method: Method = .get
     /// Дополнительные заголовоки ( добавляются к заголовкам по умолчанию из HTTPFields.default )
-    public var headers = HTTPFields()
+    public var headers: [String: String] = [:]
     /// The options for writing the parameters as JSON data.
     public var options: JSONSerialization.WritingOptions = [.withoutEscapingSlashes]
     ///  Дефолтный конфиг для создания запроса
@@ -48,7 +52,7 @@ extension URLRequest {
       request.httpBody = jsonData
     }
 
-    request.allHTTPHeaderFields = config.headers.headerDictionary
+    request.allHTTPHeaderFields = config.headers
 
     return request
   }

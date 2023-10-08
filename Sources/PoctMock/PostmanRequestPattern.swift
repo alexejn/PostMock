@@ -1,5 +1,4 @@
 import Foundation
-import HTTPTypes
 
 /// Шаблон постман запроса - используется для опеределения соответсвия между описанием запроса в постмане и реальным которое делает приложение
 public struct PostmanRequestPattern: Hashable, CustomStringConvertible, Codable {
@@ -25,8 +24,8 @@ public struct PostmanRequestPattern: Hashable, CustomStringConvertible, Codable 
     guard let url = request.url,
           let method = request.httpMethod  else { return false }
 
-    let requestUID = request.allHTTPHeaderFields?[.PostMock.xRequestId]
-    let originalMockedHost = request.allHTTPHeaderFields?[.PostMock.xMockedHost]
+    let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xRequestId)
+    let originalMockedHost = request.value(forHTTPHeaderField:PostMock.Headers.xMockedHost)
 
     return match(url: url, method: method, requestUID: requestUID, originalMockedHost: originalMockedHost)
   }

@@ -9,24 +9,13 @@ let package = Package(
             .iOS(.v14)
         ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "PostMock",
-            targets: ["PostMock"]),
+        .library(name: "PostMock", targets: ["PostMock"])
     ],
-    dependencies: [
-      .package(url: "https://github.com/apple/swift-http-types", .upToNextMajor(from: "1.0.0")),
-    ],
-    
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "PostMock",
-            dependencies: [
-              .product(name: "HTTPTypes", package: "swift-http-types"),
-              .product(name: "HTTPTypesFoundation", package: "swift-http-types")
-            ],
             path: "Sources"),
         .testTarget(
             name: "PostMockTests",

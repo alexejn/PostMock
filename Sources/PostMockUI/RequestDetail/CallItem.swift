@@ -1,5 +1,4 @@
 import SwiftUI
-import HTTPTypes
 
 struct CallItem: View {
 
@@ -73,7 +72,7 @@ struct CallItem: View {
   }
 }
 
-extension HTTPResponse.Status {
+extension URLResponse.Status {
   var statsuColor: Color {
     switch kind {
     case .successful: return .green
@@ -149,15 +148,16 @@ extension HTTPCallInfo {
   }
 }
 
-extension HTTPRequest {
-  static var sample = HTTPRequest(method: .get,
-                           scheme: "https",
-                           authority: "google.com",
-                           path: "/postmock")
+extension URLRequest {
+  static var sample = URLRequest.with {
+    $0.host = "google.com"
+    $0.path = "/postmock"
+    $0.method = .get
+  }
 }
 
 extension HTTPCallInfo {
 
   static var google = HTTPCallInfo(callID: UUID(),
-                                    request: .init(httpRequest: .sample)!)
+                                    request: .sample)
 }

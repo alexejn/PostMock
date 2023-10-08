@@ -1,5 +1,4 @@
 import Foundation
-import HTTPTypes
 
 open class PostMockURLProtocol: URLProtocol {
   static let internalKey = "com.postmock.internal"
@@ -41,7 +40,7 @@ open class PostMockURLProtocol: URLProtocol {
   }
 
   override public func startLoading() {
-    let callId = request.callID ?? UUID()
+    let callId = request.callID?.uuid ?? UUID()
     info = .init(callID: callId, request: request)
 
     let mutableRequest = (request as NSURLRequest).mutableCopy() as! NSMutableURLRequest
@@ -61,6 +60,10 @@ open class PostMockURLProtocol: URLProtocol {
     mutated.mockIfNeed()
     return mutated
   }
+}
+
+private extension String {
+  var uuid: UUID? { UUID(uuidString: self) }
 }
 
 

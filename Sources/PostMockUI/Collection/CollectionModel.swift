@@ -32,6 +32,7 @@ final class CollectionsViewModel: ObservableObject {
   }
 
   func badges(for item: CollectionItems.Item) async -> Int {
+    
     var count: Int = 0
     if let items = item.item {
       for item in items {
@@ -57,7 +58,6 @@ final class CollectionsViewModel: ObservableObject {
       CollectionsViewModel.lastLoaded = collectionItems
     } catch {
       self.error = error.localizedDescription
-      print(error)
     }
   }
 

@@ -1,5 +1,4 @@
 import Foundation
-import HTTPTypes
 
 typealias CallID = UUID
 
@@ -16,7 +15,7 @@ struct HTTPCallInfo: CustomStringConvertible {
     }
   }
   public var data: Data?
-  public var status: HTTPResponse.Status?
+  var status: URLResponse.Status?
   public var responseHeader: [String: String]?
 
   public var error: Error?

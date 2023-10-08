@@ -9,7 +9,7 @@ struct RequestNode: View {
   @EnvironmentObject var mocks: PostmanRequestsMocks
 
   var header: some View {
-    RequestLabel(name: item.name,
+    RequestLabel(name: "\(item.name)-\(badge)",
                  method: request.method,
                  url: request.url.raw,
                  badge: badge)
@@ -32,7 +32,7 @@ struct RequestNode: View {
       ResponseLabel(name: response.name)
         .environment(\.isMocked, mocks.isMocked(requestUID: item.uid,
                                                 withResponseID: response.uid))
-    }.offset(x: 60)
+    }.padding(.leading, 60)
   }
 
   var body: some View {
@@ -45,7 +45,8 @@ struct RequestNode: View {
       .environment(\.isMocked, mocks.isMocked(requestUID: item.uid))
     } else {
       header
-        .offset(x: 30)
+        .padding(.leading, 30)
+        .padding(.trailing)
     }
   }
 }
