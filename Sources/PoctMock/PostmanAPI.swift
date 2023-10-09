@@ -1,3 +1,7 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import Foundation
 
 private extension URLRequest.Config {
@@ -5,6 +9,7 @@ private extension URLRequest.Config {
     var config = Self.default
     config.host = "api.getpostman.com"
     config.headers[PostMock.Headers.xApiKey] = PostMock.shared.config.apiKey
+    config.headers[PostMock.Headers.xExclude] = ""
     return config
   }
 }
@@ -58,15 +63,15 @@ struct PostmanAPI {
 
 typealias CollectionItems = CollectionReponse.Collection
 
-struct Workspace: Decodable, Equatable  {
+struct Workspace: Codable, Equatable  {
 
-  struct Collection: Decodable, Hashable {
+  struct Collection: Codable, Hashable {
     let id: String
     let uid: String
     let name: String
   }
 
-  struct Mock: Decodable, Identifiable, Hashable {
+  struct Mock: Codable, Identifiable, Hashable {
     let id: String
     let name: String
   }

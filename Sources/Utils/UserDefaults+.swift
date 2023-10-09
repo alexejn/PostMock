@@ -1,5 +1,10 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import Combine
 import Foundation
+import os
 
 @propertyWrapper
 /// Обертка над UserDefaults
@@ -36,21 +41,25 @@ struct UserDefault<Value: Codable> {
 }
 
 protocol AnyOptional {
-    /// Returns `true` if `nil`, otherwise `false`.
-    var isNil: Bool { get }
+  /// Returns `true` if `nil`, otherwise `false`.
+  var isNil: Bool { get }
 }
 
 extension Optional: AnyOptional {
-    public var isNil: Bool { self == nil }
+  public var isNil: Bool { self == nil }
 }
 
 extension UserDefaults {
   func set<C: Encodable>(codable: C, forKey key: String) {
     do {
-      let encoded = try JSONEncoder().encode(codable)
-      set(encoded, forKey: key)
+      if let optional = codable as? AnyOptional, optional.isNil {
+        removeObject(forKey: key)
+      } else {
+        let encoded = try PropertyListEncoder().encode(codable)
+        set(encoded, forKey: key)
+      }
     } catch {
-      print("---EncodeError \(error)")
+      Logger.postmock.error("UserDefault encoding error \(error)")
     }
   }
 
@@ -58,11 +67,12 @@ extension UserDefaults {
     if let savedData = object(forKey: key) {
 
       do {
-        guard let data = savedData as? Data else { return nil }
-        let decoded = try JSONDecoder().decode(type, from: data)
+        guard let data = savedData as? Data, !data.isEmpty else { return nil }
+        let decoded = try PropertyListDecoder().decode(type, from: data)
         return decoded
       } catch {
-        print("---DecodeError \(error)")
+        removeObject(forKey: key)
+        Logger.postmock.error("UserDefault decoding error key:\(key) type:\(type) \(error)")
         return nil
       }
     } else {

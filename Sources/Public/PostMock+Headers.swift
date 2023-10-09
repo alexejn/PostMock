@@ -1,9 +1,6 @@
 //
-//  File.swift
-//  
-//
-//  Created by Alexey Nenastev on 6.10.23..
-//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import Foundation
 
@@ -16,11 +13,13 @@ public extension PostMock {
     static let xApiKey = "x-api-key"
 
     /// Id реквеста в постмане
-    public static let xRequestId = "x-postmock-request-id"
+    public static let xPostmanRequestId = "x-postmock-request-id"
 
     public static let xCallId = "x-postmock-call-id"
 
     public static let xMockedHost = "x-postmock-mocked-host"
+
+    public static let xExclude = "x-postmock-exclude"
   }
 
 

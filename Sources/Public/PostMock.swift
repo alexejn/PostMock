@@ -1,9 +1,17 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import Foundation
 import SwiftUI
 import os
 
 extension Logger {
   static var postmock = Logger(subsystem: "main", category: "postmock")
+}
+
+extension UserDefaults {
+  static let cache = UserDefaults(suiteName: "postmock.cache")!
 }
 
 public final class PostMock: ObservableObject {
@@ -17,10 +25,10 @@ public final class PostMock: ObservableObject {
   @Published var config: PostMockConfig = .test
   @Published var mockServer: MockServer?  {
     didSet {
-      UserDefaults.standard.set(codable: mockServer, forKey: UDKey.defaultMockServer.rawValue)
+      UserDefaults.cache.set(codable: mockServer, forKey: UDKey.defaultMockServer.rawValue)
     }
   }
-  
+
   @Published var collection: Workspace.Collection? {
     didSet {
       if let mockServer = mockServer, collectionMockServers.contains(mockServer) {
@@ -30,9 +38,12 @@ public final class PostMock: ObservableObject {
     }
   }
 
-  @Published var mockIsEnabled: Bool = false {
+
+  @Published var cacheWorkspace: Bool = false
+
+  @Published public var mockIsEnabled: Bool = false {
     didSet {
-      UserDefaults.standard.set(mockIsEnabled, forKey: UDKey.isEnabled.rawValue)
+      UserDefaults.cache.set(mockIsEnabled, forKey: UDKey.isEnabled.rawValue)
     }
   }
 
@@ -41,12 +52,12 @@ public final class PostMock: ObservableObject {
   @Published var error: String?
   @Published var workspace: Workspace?
 
-  public var collectionMockServers: [MockServer] {
+  var collectionMockServers: [MockServer] {
     guard let collection = collection else { return mockServers }
     return mockServers.filter { $0.collection == collection.uid }
   }
 
-  public private(set) var mockServers: [MockServer] = []
+  private(set) var mockServers: [MockServer] = []
 
   private(set) var collections: [Workspace.Collection] = [] {
     didSet {
@@ -55,6 +66,14 @@ public final class PostMock: ObservableObject {
       }
       collection = defaultCollection ?? collections.first
     }
+  }
+
+  public typealias PlaceholderValueProvider = () -> String
+
+  public var placeholderValues: [String: PlaceholderValueProvider] = [:]
+
+  func value(forPlaceholder: String) -> String? {
+    placeholderValues[forPlaceholder]?()
   }
 
   var defaultCollection: Workspace.Collection? {
@@ -67,8 +86,8 @@ public final class PostMock: ObservableObject {
 
 
   init() {
-    self.mockIsEnabled = UserDefaults.standard.bool(forKey: UDKey.isEnabled.rawValue) 
-    self.mockServer = UserDefaults.standard.decode(forKey: UDKey.defaultMockServer.rawValue)
+    self.mockIsEnabled = UserDefaults.standard.bool(forKey: UDKey.isEnabled.rawValue)
+    self.mockServer = UserDefaults.standard.decode( forKey: UDKey.defaultMockServer.rawValue)
   }
 
   @MainActor
@@ -92,7 +111,7 @@ public final class PostMock: ObservableObject {
 
   public static var shared = PostMock()
 
-  public func reload() {
+  func reload() {
     Task { @MainActor in
       workspace = nil
       await load()
@@ -126,4 +145,3 @@ public enum PostMockError: Error, CustomStringConvertible {
     }
   }
 }
-

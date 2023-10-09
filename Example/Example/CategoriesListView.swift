@@ -1,9 +1,6 @@
 //
-//  FreeAPIView.swift
-//  Example
-//
-//  Created by Alexey Nenastev on 4.10.23..
-//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import SwiftUI
 import HTTPTypes
@@ -145,7 +142,7 @@ final class ViewModel: NSObject, ObservableObject {
   func random1() async  {
     self.random = nil
     var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
-    req.setValue("1122734-94924c70-58df-482a-811d-ff1bb0b03edf", forHTTPHeaderField: PostMock.Headers.xRequestId)
+    req.setValue("1122734-94924c70-58df-482a-811d-ff1bb0b03edf", forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
 
     do {
       let (data, _) = try await customURLSession.data(for: req)
@@ -159,7 +156,7 @@ final class ViewModel: NSObject, ObservableObject {
   func random2() async  {
     self.random = nil
     var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
-    req.setValue("1122734-c5751f7c-7e38-42b0-82d4-7fcfb57fc79a", forHTTPHeaderField: PostMock.Headers.xRequestId)
+    req.setValue("1122734-c5751f7c-7e38-42b0-82d4-7fcfb57fc79a", forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
     do {
       let (data, _) = try await customURLSession.data(for: req)
       self.random = try JSONDecoder().decode(EntriesResponse.self, from: data).entries.first

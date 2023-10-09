@@ -1,4 +1,9 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import SwiftUI
+
 struct ResponseDetailView: View {
   var item: CollectionItems.Item
   var response: CollectionItems.Response
@@ -38,12 +43,27 @@ struct ResponseDetailView: View {
           }
         }
         .buttonStyle(.plain)
-        Divider()
+
+
         if let pattern = item.pattern, usedForMock {
-          Text(pattern.description)
-            .foregroundColor(.blue)
           Divider()
+          VStack(alignment: .leading) {
+            Text("Mocked if request match template")
+              .fontWeight(.light)
+            Text(pattern.description)
+              .foregroundColor(.blue)
+              .font(.callout)
+            Spacer()
+              .frame(height: 5)
+            Text("or has header \(PostMock.Headers.xPostmanRequestId) equal")
+              .fontWeight(.light)
+            Text(item.uid)
+              .fontWeight(.thin)
+              .font(.footnote)
+          }
+            .font(.footnote)
         }
+        Divider()
       }
       .padding([.top, .horizontal])
       .background(Color.white)

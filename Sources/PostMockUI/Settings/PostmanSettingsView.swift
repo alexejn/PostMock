@@ -1,3 +1,7 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import SwiftUI
 
 struct PostmanSettingsView: View {
@@ -20,9 +24,20 @@ struct PostmanSettingsView: View {
           LabeledContent("Default mock server", value: model.defaultMockServer?.name ?? model.config.defaultMockServerID ?? "")
         }
       }
+
+      Section(header: Text("Current Placeholders values")) {
+        ForEach(Array(PostMock.shared.placeholderValues.keys), id: \.self) { key in
+          HStack {
+            Text("\(key):")
+              .bold()
+            Text(PostMock.shared.value(forPlaceholder: key) ?? "")
+          }
+        }
+      }
     }
     .navigationTitle("Settings")
   }
+
 }
 
 struct PostmanSettingsView_Previews: PreviewProvider {

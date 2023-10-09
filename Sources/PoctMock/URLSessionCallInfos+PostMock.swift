@@ -1,10 +1,6 @@
 //
-//  HTTPCallInfoDictionary+Postman.swift
-//  fbsData
-//
-//  Created by Alexey Nenastev on 27.8.23..
-//  Copyright © 2023 Data Driven Lab. All rights reserved.
-//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import Foundation
 

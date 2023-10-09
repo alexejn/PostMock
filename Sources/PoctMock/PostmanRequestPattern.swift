@@ -1,3 +1,7 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import Foundation
 
 /// Шаблон постман запроса - используется для опеределения соответсвия между описанием запроса в постмане и реальным которое делает приложение
@@ -24,7 +28,7 @@ public struct PostmanRequestPattern: Hashable, CustomStringConvertible, Codable 
     guard let url = request.url,
           let method = request.httpMethod  else { return false }
 
-    let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xRequestId)
+    let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
     let originalMockedHost = request.value(forHTTPHeaderField:PostMock.Headers.xMockedHost)
 
     return match(url: url, method: method, requestUID: requestUID, originalMockedHost: originalMockedHost)
@@ -37,7 +41,7 @@ public struct PostmanRequestPattern: Hashable, CustomStringConvertible, Codable 
     guard let host = url.host else { return false }
     let hostPart = originalMockedHost ?? host
     let urlPattern = "\(method.uppercased()) \(hostPart)\(url.path)"
-    let hostPlaceholderValue = PostMockPlaceholderProvider.shared[hostPlaceholder]?()
+    let hostPlaceholderValue = PostMock.shared.value(forPlaceholder: hostPlaceholder)
     let pattern = "\(self.method.uppercased()) \(hostPlaceholderValue ?? hostPart)\(path)"
     return PostmanRequestPattern.matchURL(urlPattern, postmanURLPath: pattern)
   }

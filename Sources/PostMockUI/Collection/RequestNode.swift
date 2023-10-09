@@ -1,3 +1,7 @@
+//
+// Created by Alexey Nenastyev on 9.10.23.
+// Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
+
 import SwiftUI
 
 struct RequestNode: View {
@@ -9,7 +13,7 @@ struct RequestNode: View {
   @EnvironmentObject var mocks: PostmanRequestsMocks
 
   var header: some View {
-    RequestLabel(name: "\(item.name)-\(badge)",
+    RequestLabel(name: item.name,
                  method: request.method,
                  url: request.url.raw,
                  badge: badge)
