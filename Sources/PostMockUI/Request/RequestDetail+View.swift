@@ -37,7 +37,7 @@ struct RequestDetailView: View {
           Spacer()
 
           Button(action: {
-            model.copyToClipboard()
+            UIPasteboard.general.string = model.item.uid
           }) {
             Image(systemName: "doc.on.doc")
           }
@@ -46,7 +46,6 @@ struct RequestDetailView: View {
       }
       .padding(.leading, 4)
       .padding([.top, .bottom, .trailing])
-      .background(Color.white)
       ScrollView {
         ForEach(model.calls, id: \.callID) { call in
           NavigationLink {

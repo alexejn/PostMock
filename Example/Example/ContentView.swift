@@ -11,12 +11,11 @@ struct ContentView: View {
       CategoriesListView()
     }
     .onAppear {
-      PostMock.shared.configurate(with: .myConfig)
-      PostMock.shared.enable()
-      PostMock.shared.placeholderValues =
-      [
-        "{{host}}" : { "api.publicapis.org" }
-      ]
+//      PostMock.shared.configurate(with: PostMock.Config(
+//        apiKey: // place your api-key here,
+//        workspaceID: // place your workspace id here))
+
+      PostMock.shared.isEnabled = true
     }
   }
 }
@@ -24,10 +23,3 @@ struct ContentView: View {
 #Preview {
   ContentView()
 }
-
-extension PostMockConfig {
-  static var myConfig = Self(apiKey: "PMAK-651d735b267ab40031ebbbe8-b7109f56a916e1b447e41f84e88575f00d",
-                             workspaceID: "f2c801d5-9bbd-4d5e-8984-fa23d3bb10c2",
-                             defaultCollectionID: "1122734-8f8d23a8-f19b-4883-a260-3bcf3bd204f5")
-}
-

@@ -29,6 +29,8 @@ struct HTTPCallInfo: CustomStringConvertible {
 
   public var method: String { request.httpMethod ?? "" }
   public var path: String { request.url?.path ?? "" }
+  public var query: String { request.url?.query ?? "" }
+  public var pathAndQuery: String { path + (query.isEmpty ? "" : "?\(query)") }
   public var host: String { request.url?.host ?? "" }
 
   public var duration: TimeInterval? {

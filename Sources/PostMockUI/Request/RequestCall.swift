@@ -31,7 +31,7 @@ struct CallItem: View {
         Divider().frame(height: 14)
         Spacer()
         Text(call.statusString)
-          .foregroundColor(call.status?.statsuColor ?? Color.black)
+          .foregroundColor(call.status?.statsuColor ?? Color.primary)
           .font(.caption2)
           .fontWeight(.bold)
 
@@ -41,7 +41,7 @@ struct CallItem: View {
         .multilineTextAlignment(.leading)
         .font(.callout.monospacedIOS14())
         .padding(.vertical, 8)
-        .foregroundColor(call.host.isMockServerHost ? .blue : .black)
+        .foregroundColor(call.host.isMockServerHost ? .accentColor  : .primary)
 
       Divider()
       HStack(alignment: .center) {
@@ -70,8 +70,8 @@ struct CallItem: View {
         .font(.subheadline)
     }
     .padding()
-    .background(call.status?.statsuColor.opacity(0.08) ?? Color.black)
-    .foregroundColor(.black)
+    .background(call.status?.statsuColor.opacity(0.08) ?? Color.primary)
+    .foregroundColor(.primary)
 
   }
 }
@@ -83,7 +83,7 @@ extension URLResponse.Status {
     case .invalid: return .orange
     case .clientError: return .red
     case .serverError: return .brownIOS14
-    default: return .black
+    default: return .primary
     }
   }
 }

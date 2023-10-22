@@ -27,14 +27,6 @@ final class RequestDetailViewModel: ObservableObject {
 #endif
   }
 
-  func copyToClipboard() {
-#if os(macOS)
-    NSPasteboard.general.setString(item.uid, forType: .string)
-#endif
-#if os(iOS)
-    UIPasteboard.general.string = item.uid
-#endif
-  }
 }
 
 extension URL {

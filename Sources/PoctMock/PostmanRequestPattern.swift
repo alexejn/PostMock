@@ -16,6 +16,7 @@ public struct PostmanRequestPattern: Hashable, CustomStringConvertible, Codable 
   let requestUID: String
 
   public var description: String { "\(method.uppercased()) \(hostPlaceholder)\(path)" }
+  public var actualDescription: String { "\(method.uppercased()) \(PostMock.shared.value(forPlaceholder: hostPlaceholder) ?? "*")\(path)" }
 
   public init(method: String, hostPlaceholder: String, path: String, requestUID: String) {
     self.method = method

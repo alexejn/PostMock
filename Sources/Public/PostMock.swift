@@ -10,64 +10,46 @@ extension Logger {
   static var postmock = Logger(subsystem: "main", category: "postmock")
 }
 
-extension UserDefaults {
-  static let cache = UserDefaults(suiteName: "postmock.cache")!
-}
-
 public final class PostMock: ObservableObject {
 
-  enum UDKey: String {
-    case isEnabled = "postmock.mockIsEnabled"
-    case defaultMockServer = "postmock.defaultMockServer"
-  }
-
-  var isEnabled: Bool = false
-  @Published var config: PostMockConfig = .test
-  @Published var mockServer: MockServer?  {
+  public var isEnabled: Bool = false {
     didSet {
-      UserDefaults.cache.set(codable: mockServer, forKey: UDKey.defaultMockServer.rawValue)
-    }
-  }
-
-  @Published var collection: Workspace.Collection? {
-    didSet {
-      if let mockServer = mockServer, collectionMockServers.contains(mockServer) {
-        return
+      if isEnabled {
+        URLProtocol.registerClass(PostMockURLProtocol.self)
+      } else {
+        URLProtocol.unregisterClass(PostMockURLProtocol.self)
       }
-      mockServer = defaultMockServer ?? collectionMockServers.first
     }
   }
 
-
-  @Published var cacheWorkspace: Bool = false
-
-  @Published public var mockIsEnabled: Bool = false {
+  @Published var config: Config = .empty {
     didSet {
-      UserDefaults.cache.set(mockIsEnabled, forKey: UDKey.isEnabled.rawValue)
+      configured = true
+      configID = config.id
     }
   }
 
-  @Published var isLoading: Bool = false
-  @Published var isLoaded: Bool = false
-  @Published var error: String?
-  @Published var workspace: Workspace?
+  @Published var configured: Bool = false
 
-  var collectionMockServers: [MockServer] {
-    guard let collection = collection else { return mockServers }
-    return mockServers.filter { $0.collection == collection.uid }
-  }
+  public var mockServer: MockServer?
+  private let storage = Storage(logger: .postmock)
 
-  private(set) var mockServers: [MockServer] = []
-
-  private(set) var collections: [Workspace.Collection] = [] {
+  var storedConfigs: [Config] = [] {
     didSet {
-      if let collection = collection, collections.contains(collection) {
-        return
+      guard storedConfigs != oldValue else { return }
+      Task {
+        try? await storage.store(data: storedConfigs, to: .configurateion)
       }
-      collection = defaultCollection ?? collections.first
     }
   }
 
+  @AppStorage("postmock.mockIsEnabled") public var mockIsEnabled: Bool = false {
+    didSet { objectWillChange.send() }
+  }
+
+  @AppStorage("postmock.configID") private var configID: String? {
+    didSet { objectWillChange.send() }
+  }
   public typealias PlaceholderValueProvider = () -> String
 
   public var placeholderValues: [String: PlaceholderValueProvider] = [:]
@@ -76,62 +58,26 @@ public final class PostMock: ObservableObject {
     placeholderValues[forPlaceholder]?()
   }
 
-  var defaultCollection: Workspace.Collection? {
-    collections.first(where: {$0.id == config.defaultCollectionID || $0.uid == config.defaultCollectionID })
+  private init() { 
+    restoreAndSetDefaultConfigIfCan()
   }
 
-  var defaultMockServer: MockServer? {
-    collectionMockServers.first(where: {$0.id == config.defaultMockServerID})
-  }
+  private func restoreAndSetDefaultConfigIfCan() {
+    Task {
+      if let configs: [PostMock.Config] = await storage.restore(from: .configurateion)  {
+        self.storedConfigs = configs
+      }
 
-
-  init() {
-    self.mockIsEnabled = UserDefaults.standard.bool(forKey: UDKey.isEnabled.rawValue)
-    self.mockServer = UserDefaults.standard.decode( forKey: UDKey.defaultMockServer.rawValue)
-  }
-
-  @MainActor
-  func load() async {
-    defer {
-      isLoading = false
-    }
-    do {
-      guard config.workspaceID.isEmpty == false else { throw PostMockError.NotConfigured }
-      isLoading = true
-      let workspace = try await PostmanAPI.workspace(worspaceID: config.workspaceID)
-      self.mockServers = try await PostmanAPI.mocks(workspaceID: config.workspaceID)
-      self.collections = workspace.collections ?? []
-      self.workspace = workspace
-      isLoaded = true
-    } catch {
-      self.error = "\(error)"
-      Logger.postmock.error("Load failed \(error)")
+      if let config: PostMock.Config = storedConfigs.first(where: { $0.id == configID }) {
+        self.config = config
+      }
     }
   }
 
   public static var shared = PostMock()
 
-  func reload() {
-    Task { @MainActor in
-      workspace = nil
-      await load()
-    }
-  }
-
-  public func configurate(with config: PostMockConfig) {
+  public func configurate(with config: Config) {
     self.config = config
-  }
-
-  public func enable() {
-    guard isEnabled == false else { return }
-    URLProtocol.registerClass(PostMockURLProtocol.self)
-    self.isEnabled = true
-  }
-
-  public func disabled() {
-    guard isEnabled else { return }
-    URLProtocol.unregisterClass(PostMockURLProtocol.self)
-    self.isLoading = false
   }
 }
 

@@ -33,7 +33,7 @@ open class PostMockURLProtocol: URLProtocol {
 
   private class func canServeRequest(_ request: URLRequest) -> Bool {
     guard PostMock.shared.isEnabled else { return false }
-    guard request.value(forHTTPHeaderField: PostMock.Headers.xExclude) != nil else { return false }
+    guard request.value(forHTTPHeaderField: PostMock.Headers.xExclude) == nil else { return false }
 
     guard URLProtocol.property(forKey: PostMockURLProtocol.internalKey, in: request) == nil,
           let url = request.url,

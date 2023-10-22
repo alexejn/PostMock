@@ -10,6 +10,7 @@ struct ResponseDetailView: View {
 
   @EnvironmentObject var model: CollectionsViewModel
   @EnvironmentObject var mocks: PostmanRequestsMocks
+  @State private var fullInfo: Bool = false
 
   private var usedForMock: Bool { mocks.isMocked(requestUID: item.uid,
                                                  withResponseID: response.uid) }
@@ -38,36 +39,64 @@ struct ResponseDetailView: View {
                 }
               }
               .foregroundColor(.blue)
-
             }
           }
         }
         .buttonStyle(.plain)
 
+        Divider()
+        HStack(spacing: 10) {
+          Text("ID")
+            .font(.footnote.weight(.bold))
+          Text(response.uid)
+            .font(.caption)
+          Spacer()
+
+          Button(action: {
+            UIPasteboard.general.string = response.uid
+          }) {
+            Image(systemName: "doc.on.doc")
+          }
+        }
 
         if let pattern = item.pattern, usedForMock {
           Divider()
-          VStack(alignment: .leading) {
-            Text("Mocked if request match template")
-              .fontWeight(.light)
-            Text(pattern.description)
-              .foregroundColor(.blue)
-              .font(.callout)
-            Spacer()
-              .frame(height: 5)
-            Text("or has header \(PostMock.Headers.xPostmanRequestId) equal")
-              .fontWeight(.light)
-            Text(item.uid)
-              .fontWeight(.thin)
-              .font(.footnote)
-          }
+          if fullInfo {
+            VStack(alignment: .leading) {
+              Text("Mocked if request match template")
+                .fontWeight(.light)
+              Text(pattern.actualDescription)
+                .fontWeight(.medium)
+                .font(.callout)
+                .lineLimit(0)
+                .multilineTextAlignment(.leading)
+              Spacer()
+                .frame(height: 12)
+              Text("or has header **\(PostMock.Headers.xPostmanRequestId)** equals to:")
+                .fontWeight(.light)
+              Text(item.uid)
+                .fontWeight(.thin)
+                .font(.footnote)
+            }
             .font(.footnote)
+          } else {
+            Button(action: {
+              withAnimation {
+                fullInfo.toggle()
+              }
+            }) {
+              Text(pattern.description)
+                .foregroundColor(.blue)
+                .font(.callout)
+            }
+          }
         }
         Divider()
       }
+      .animation(.easeInOut, value: fullInfo)
       .padding([.top, .horizontal])
-      .background(Color.white)
       .environment(\.isMocked, usedForMock)
+
       ScrollView {
         LazyVStack(alignment: .leading, spacing: 5) {
 

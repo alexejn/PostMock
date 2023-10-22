@@ -7,31 +7,41 @@ import SwiftUI
 struct PostmanSettingsView: View {
   @EnvironmentObject var model: PostMock
 
+  @ViewBuilder
+  private func labeledContent(_ title: String, value: String) -> some View {
+    if #available(iOS 16.0, *) {
+      LabeledContent(title, value: value)
+    } else {
+      HStack {
+        Text("\(title):")
+          .bold()
+        Text(value)
+          .font(.footnote)
+      }
+    }
+  }
+
   var body: some View {
     Form {
       Section {
         NavigationLink {
+          ConfigurationsView()
+            .environmentObject(PostMock.shared)
+        } label: {
+          Text("Configurations")
+        }
+
+        NavigationLink {
           CurrentMocksView()
             .environmentObject(PostmanRequestsMocks.shared)
         } label: {
-          Text("Current mocks")
-        }
-      }
-      Section {
-        if #available(iOS 16.0, *) {
-          LabeledContent("Workspace", value: model.workspace?.name ?? model.config.workspaceID)
-          LabeledContent("Default collection", value: model.defaultCollection?.name ?? model.config.defaultCollectionID ?? "")
-          LabeledContent("Default mock server", value: model.defaultMockServer?.name ?? model.config.defaultMockServerID ?? "")
+          labeledContent("Current mocks", value: "\(PostmanRequestsMocks.shared.mocked.count)")
         }
       }
 
-      Section(header: Text("Current Placeholders values")) {
+      Section(header: Text("Placeholders")) {
         ForEach(Array(PostMock.shared.placeholderValues.keys), id: \.self) { key in
-          HStack {
-            Text("\(key):")
-              .bold()
-            Text(PostMock.shared.value(forPlaceholder: key) ?? "")
-          }
+          labeledContent(key, value: PostMock.shared.value(forPlaceholder: key) ?? "")
         }
       }
     }

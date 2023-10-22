@@ -33,6 +33,11 @@ struct CollectionView: View {
             .padding(.vertical, 8)
           }
         }
+        .refreshIOS14 {
+          Task {
+            await model.load()
+          }
+        }
         .sheet(item: $model.selectedItem) { selected in
           Group {
             NavigationView {
@@ -57,10 +62,18 @@ struct CollectionView: View {
     }
     .environmentObject(model)
     .onChange(of: collection, perform: { value in
-      Task {
-        await model.loadNewCollection(collection: value)
-      }
+      model.loadNewCollection(collection: value)
     })
+  }
+}
+
+extension View {
+  func refreshIOS14(_ perform: @Sendable @escaping () -> Void) -> some View {
+    if #available(iOS 15.0, *) {
+      return self.refreshable(action: perform)
+    } else {
+      return self
+    }
   }
 }
 

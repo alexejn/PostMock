@@ -3,7 +3,6 @@
 // Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import SwiftUI
-import HTTPTypes
 import PostMock
 
 struct CategoryView: View {
@@ -61,7 +60,7 @@ struct CategoriesListView: View {
       }
       .navigationTitle("Select a category")
       .toolbar {
-        ToolbarItem(placement: .rightCorner) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           Button("Random1") {
             Task {
               await model.random1()
@@ -69,7 +68,7 @@ struct CategoriesListView: View {
           }
         }
 
-        ToolbarItem(placement: .rightCorner) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           Button("Random2") {
             Task {
               await model.random2()
@@ -77,7 +76,7 @@ struct CategoriesListView: View {
           }
         }
 
-        ToolbarItem(placement: .leftCorner) {
+        ToolbarItem(placement: .navigationBarLeading) {
           Button("PostMock") {
             postMockViewPresented.toggle()
           }
@@ -212,25 +211,5 @@ struct Entry: Decodable, Hashable, Identifiable {
     case api = "API"
     case description = "Description"
     case link = "Link"
-  }
-}
-
-extension ToolbarItemPlacement {
-  static var rightCorner: ToolbarItemPlacement {
-    #if os(iOS)
-    return .navigationBarTrailing
-    #endif
-    #if os(macOS)
-    return .confirmationAction
-    #endif
-  }
-
-  static var leftCorner: ToolbarItemPlacement {
-    #if os(iOS)
-    return .navigationBarLeading
-    #endif
-    #if os(macOS)
-    return .primaryAction
-    #endif
   }
 }

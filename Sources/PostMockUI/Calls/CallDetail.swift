@@ -38,37 +38,6 @@ private struct HeadersView: View {
   }
 }
 
-private struct BodyView: View {
-
-  private let bodyString: String?
-
-  init(bodyData: Data?) {
-    self.bodyString = bodyData?.prettyPrintedJSONString
-  }
-
-  init(string: String) {
-    self.bodyString = string
-  }
-
-  var body: some View {
-    Group {
-      if let bodyString = bodyString {
-        ScrollView {
-          HStack{
-            Text(bodyString)
-              .font(.footnote)
-              .padding(.horizontal, 8)
-            Spacer()
-          }
-        }
-      } else {
-        EmptyView()
-      }
-    }
-  }
-}
-
-
 struct CallDetailView: View {
 
   let call: HTTPCallInfo
@@ -78,7 +47,7 @@ struct CallDetailView: View {
   var body: some View {
     TabView(selection: $selected)  {
       if let decodeError = call.decodeError {
-        BodyView(string: "\(decodeError)")
+        CallBodyView(string: "\(decodeError)")
           .tag(0)
           .tabItem {
             Label("Issue", systemImage: "exclamationmark.transmission")
@@ -86,14 +55,14 @@ struct CallDetailView: View {
           }
       }
 
-      BodyView(bodyData: call.data)
+      CallBodyView(bodyData: call.data)
         .navigationTitle("Response Body")
         .tag(1)
         .tabItem {
           Label("Response", systemImage: "airplane.arrival")
         }
 
-      BodyView(bodyData: call.request.httpBody)
+      CallBodyView(bodyData: call.request.httpBody)
         .navigationTitle("Request Body")
         .tag(2)
         .tabItem {
@@ -114,6 +83,8 @@ struct CallDetailView: View {
           Label("Request", systemImage: "list.dash.header.rectangle")
         }
     }
+    .navigationTitle(call.status?.statusDescription ?? "")
+    .navigationBarTitleDisplayMode(.inline)
 
   }
 }

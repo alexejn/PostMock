@@ -11,8 +11,9 @@ final class CollectionsViewModel: ObservableObject {
   @Published var isLoading: Bool = true
   @Published var error: String?
   @Published var selectedItem: SelectedItem?
-  @Published var collectionItems: CollectionItems? = lastLoaded
-  private static var lastLoaded: CollectionItems?
+  @Published var collectionItems: CollectionItems?
+  private let storage = Storage(logger: .postmock)
+
 
   enum SelectedItem: Identifiable {
     case request(item: CollectionItems.Item, request: CollectionItems.Request)
@@ -30,7 +31,13 @@ final class CollectionsViewModel: ObservableObject {
 
   init(_ collection: Workspace.Collection) {
     self.collection = collection
-    Task {
+    restoreOrLoad()
+  }
+
+  private func restoreOrLoad() {
+    Task { @MainActor in
+      self.collectionItems = await storage.restore(from: .collection(collectionUID: collection.uid))
+      guard self.collectionItems == nil else { return }
       await load()
     }
   }
@@ -53,23 +60,23 @@ final class CollectionsViewModel: ObservableObject {
 
   @MainActor
   func load() async {
-    defer {
-      isLoading = false
-    }
+    storage.remove(file: .collection(collectionUID: collection.uid))
+    self.collectionItems = nil
     do {
       isLoading = true
       self.collectionItems = try await PostmanAPI.collectionItems(collectionID: collection.id)
-      CollectionsViewModel.lastLoaded = collectionItems
+      isLoading = false
+      try? await storage.store(data: self.collectionItems!, to: .collection(collectionUID: collection.uid))
     } catch {
+      isLoading = false
       self.error = error.localizedDescription
     }
   }
 
-  @MainActor
-  func loadNewCollection(collection: Workspace.Collection) async {
+  func loadNewCollection(collection: Workspace.Collection) {
     guard self.collection != collection else { return }
     self.collection = collection
     self.collectionItems = nil
-    await load()
+    restoreOrLoad()
   }
 }

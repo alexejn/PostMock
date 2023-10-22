@@ -55,7 +55,7 @@ struct PostmanAPI {
     let resp = try await URLSession.dataResponse(for: request)
 
     let mocks = try resp.decode(MocksResponse.self).mocks.map {
-      return MockServer(id: $0.id, name: $0.name, host: $0.mockUrl.host!, collection: $0.collection)
+      return MockServer(id: $0.id, name: $0.name, host: $0.mockUrl.host!, collectionUID: $0.collection)
     }
     return mocks
   }
@@ -98,10 +98,10 @@ struct MocksResponse: Decodable {
 }
 
 struct CollectionReponse: Decodable {
-  struct Collection: Decodable {
+  struct Collection: Codable {
     let item: [Item]
 
-    struct Item: Decodable, Identifiable {
+    struct Item: Codable, Identifiable {
       var id: String { uid }
       let name: String
       let item: [Item]?

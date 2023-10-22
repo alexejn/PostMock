@@ -12,13 +12,14 @@ struct ResponseLabel: View {
   @Environment(\.isMocked) var isMocked
 
   var body: some View {
-    HStack {
+    HStack(alignment: .firstTextBaseline) {
       Image(systemName: "note.text")
       Text(name)
         .font(.headline.monospacedIOS14().weight(.light))
+        .multilineTextAlignment(.leading)
       Spacer()
     }
-    .foregroundColor(isMocked ? .blue : .black)
+    .foregroundColor(isMocked ? .accentColor : .primary)
     .opacity(!postMock.mockIsEnabled && isMocked ? 0.3 : 1)
     .padding(.vertical, 1)
   }

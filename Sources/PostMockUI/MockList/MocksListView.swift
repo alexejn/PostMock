@@ -21,10 +21,10 @@ struct CurrentMocksView: View {
       .padding(.horizontal)
     }
     .toolbar {
-      ToolbarItem(placement: .rightCorner) {
-        Button("Clear", action: {
+      ToolbarItem(placement: .topBarTrailing) {
+        Button("", systemImage: "trash") {
           mocks.clearAll()
-        })
+        }
       }
     }
     .navigationTitle("Current mocks")

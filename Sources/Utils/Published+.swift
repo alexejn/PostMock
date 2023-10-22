@@ -14,7 +14,7 @@ extension Published where Value: Codable {
                 let value = try JSONDecoder().decode(Value.self, from: data)
                 self.init(initialValue: value)
             } catch {
-                print("🐞🐞🐞Error while deconding yser data")
+                debugPrint("🐞🐞🐞Error while deconding yser data")
                 self.init(initialValue: defaultValue)
             }
         } else {
@@ -27,7 +27,7 @@ extension Published where Value: Codable {
                     let data = try JSONEncoder().encode(val)
                     UserDefaults.standard.set(data, forKey: key)
                 } catch {
-                    print("Error while decoding user data")
+                  debugPrint("Error while decoding user data")
                 }
             }
             .store(in: &cancellableSet)

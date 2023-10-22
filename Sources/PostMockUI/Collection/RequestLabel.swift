@@ -23,7 +23,7 @@ struct RequestLabel: View {
           .replacingOccurrences(of: "?", with: "\n?")
           .replacingOccurrences(of: "&", with: "\n&"))
           .font(.body)
-          .foregroundColor(.gray)
+          .foregroundColor(.secondary)
 
 
       }
@@ -32,7 +32,7 @@ struct RequestLabel: View {
     .overlayIOS14(alignment: .trailingFirstTextBaseline, content: {
       if badge != 0 {
         Text("\(badge)")
-          .foregroundColor(.gray.opacity(0.5))
+          .foregroundColor(.secondary.opacity(0.5))
       }
     })
     .padding(.vertical, 1)

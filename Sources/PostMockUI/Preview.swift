@@ -31,7 +31,7 @@ extension CollectionItems.Item {
              method: "get",
              url: "/v1/oauth/authorize",
              uid: "1122734-5cff63c7-7fbc-43e1-857a-09f652ef2812",
-             responses: .sample(reqID: "v1/oath/authorize", name: "200: Code"))
+             responses: .sample(reqID: "1122734-ffff63c7-7fbc-43e1-857a-09f652ef2812", name: "200: Code"))
   }
 
   static var createCollection: Self {

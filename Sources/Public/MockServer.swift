@@ -8,10 +8,10 @@ public struct MockServer: Codable, Hashable, Identifiable {
   public let host: String
   public let collection: String
 
-  init(id: String, name: String, host: String, collection: String) {
+  init(id: String, name: String, host: String, collectionUID: String) {
     self.name = name
     self.host = host
     self.id = id 
-    self.collection = collection
+    self.collection = collectionUID
   }
 }

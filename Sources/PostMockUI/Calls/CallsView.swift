@@ -43,12 +43,12 @@ private struct CallsViewItem: View {
         }
       }
       .font(.footnote)
-      Text(call.path)
+      Text(call.pathAndQuery)
         .multilineTextAlignment(.leading)
         .font(.footnote)
-        .foregroundColor(call.host.isMockServerHost ? .blue : .black)
+        .foregroundColor(call.host.isMockServerHost ? .accentColor : .primary)
     }
-    .foregroundColor(.black)
+    .foregroundColor(.primary)
   }
 }
 
@@ -75,7 +75,7 @@ struct CallsView: View {
       .padding(.horizontal)
     }
     .toolbar {
-      ToolbarItem(placement: .rightCorner) {
+      ToolbarItem(placement: .topBarTrailing) {
         Button("", systemImage: "trash") {
           calls = []
           Task {
