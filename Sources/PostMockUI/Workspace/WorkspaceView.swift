@@ -73,17 +73,17 @@ struct WorkspaceView: View {
       }
       .toolbar {
 
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .navigationBarLeading) {
           Toggle("Mock", isOn: $postMock.mockIsEnabled)
             .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           ReloadButton(isLoading: model.isWorkspaceLoading,
                        reload: model.reload)
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink {
             CallsView()
               .environmentObject(model)
@@ -95,7 +95,7 @@ struct WorkspaceView: View {
         }
 
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink {
             PostmanSettingsView()
               .environmentObject(model)

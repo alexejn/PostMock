@@ -5,7 +5,7 @@
 import Foundation
 
 public extension PostMock {
-  struct Mock {
+  struct Request {
 
     public let pattern: PostmanRequestPattern
 
@@ -23,7 +23,7 @@ public extension PostMock {
       self.init(pattern: .init(method: "", hostPlaceholder: "", path: "", requestUID: requestID))
     }
 
-    public mutating func with(_ responceID: MockResponseID) {
+    public mutating func mock(with responceID: MockResponseID) {
       self.responceID = responceID
       PostmanRequestsMocks.shared
         .setMock(pattern: pattern, mockResponseID: responceID)

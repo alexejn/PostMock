@@ -5,6 +5,7 @@
 import SwiftUI
 import PostMock
 
+// MARK: Views
 struct CategoryView: View {
   let category: String
   @ObservedObject var model: ViewModel
@@ -49,37 +50,42 @@ struct CategoriesListView: View {
         if model.isLoading {
           ProgressView()
         } else {
-          List(model.categories, id: \.self) { category in
-            NavigationLink {
-              CategoryView(category: category, model: model)
-            } label: {
-              Text(category)
+          List {
+            Section {
+              HStack {
+                Button("Random #1") {
+                  Task {
+                    await model.random1()
+                  }
+                }
+                Button("Random #2") {
+                  Task {
+                    await model.random2()
+                  }
+                }
+              }
+            }
+            .foregroundColor(.mint)
+            .buttonStyle(.bordered)
+            Section("Categories") {
+              ForEach(model.categories, id: \.self) { category in
+                NavigationLink {
+                  CategoryView(category: category, model: model)
+                } label: {
+                  Text(category)
+                }
+              }
             }
           }
         }
       }
-      .navigationTitle("Select a category")
+      .navigationTitle("Public APIs")
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
-          Button("Random1") {
-            Task {
-              await model.random1()
-            }
-          }
-        }
-
-        ToolbarItem(placement: .navigationBarTrailing) {
-          Button("Random2") {
-            Task {
-              await model.random2()
-            }
-          }
-        }
-
-        ToolbarItem(placement: .navigationBarLeading) {
           Button("PostMock") {
             postMockViewPresented.toggle()
           }
+          .buttonStyle(.bordered)
         }
       }
       .sheet(item: $model.random) { entry in
@@ -90,7 +96,7 @@ struct CategoriesListView: View {
       .sheet(isPresented: $postMockViewPresented, content: {
         PostMockView()
       })
-      
+
     }
     .task {
       await model.loadCategories()
@@ -100,6 +106,8 @@ struct CategoriesListView: View {
     })
   }
 }
+
+// MARK: View Model
 
 final class ViewModel: NSObject, ObservableObject {
 
@@ -115,6 +123,7 @@ final class ViewModel: NSObject, ObservableObject {
     }
   }
 
+  /// When you use custom URLSession or configuration PostMockURLProtocol should be added to protocolClasses
   private lazy var customURLSession: URLSession = {
     let configuration = URLSessionConfiguration.default
     configuration.protocolClasses = [PostMockURLProtocol.self]
@@ -128,8 +137,9 @@ final class ViewModel: NSObject, ObservableObject {
   func loadCategories() async  {
     defer { isLoading = false }
     isLoading = true
-    var req = URLRequest(url: URL(string: "https://api.publicapis.org/categories")!)
+    let req = URLRequest(url: URL(string: "https://api.publicapis.org/categories")!)
     do {
+      /// Used shared url session
       let (data, _) = try await URLSession.shared.data(for: req)
       self.categories = try JSONDecoder().decode(CategoriesResponse.self, from: data).categories
     } catch {
@@ -138,29 +148,35 @@ final class ViewModel: NSObject, ObservableObject {
   }
 
   @MainActor
-  func random1() async  {
+  func random1() async -> Entry? {
     self.random = nil
     var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
     req.setValue("1122734-94924c70-58df-482a-811d-ff1bb0b03edf", forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
 
     do {
+      /// Example with custom url session
       let (data, _) = try await customURLSession.data(for: req)
       self.random = try JSONDecoder().decode(EntriesResponse.self, from: data).entries.first
+      return self.random
     } catch {
       errorMessage = "\(error)"
+      return nil
     }
   }
 
   @MainActor
-  func random2() async  {
+  func random2() async -> Entry? {
     self.random = nil
     var req = URLRequest(url: URL(string: "https://api.publicapis.org/random")!)
     req.setValue("1122734-c5751f7c-7e38-42b0-82d4-7fcfb57fc79a", forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
     do {
+      /// Example with custom url session
       let (data, _) = try await customURLSession.data(for: req)
       self.random = try JSONDecoder().decode(EntriesResponse.self, from: data).entries.first
+      return self.random
     } catch {
       errorMessage = "\(error)"
+      return nil
     }
   }
 
@@ -191,6 +207,8 @@ final class ViewModel: NSObject, ObservableObject {
 extension ViewModel: URLSessionDelegate {
 
 }
+
+// MARK: DTO
 
 struct CategoriesResponse: Decodable {
   let categories: [String]

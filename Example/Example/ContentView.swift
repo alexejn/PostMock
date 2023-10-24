@@ -11,15 +11,19 @@ struct ContentView: View {
       CategoriesListView()
     }
     .onAppear {
-//      PostMock.shared.configurate(with: PostMock.Config(
-//        apiKey: // place your api-key here,
-//        workspaceID: // place your workspace id here))
-
+      PostMock.shared.configurate(with: .example)
       PostMock.shared.isEnabled = true
     }
   }
 }
 
-#Preview {
-  ContentView()
+extension PostMock.Config {
+  static var example = Self(apiKey: "PMAK" + "-651d735b267ab40031e" + "bbbe8-b7109f56a916e1b447e41f84e88575f00d",
+                            workspaceID: "f2c801d5-9bbd-4d5e-8984-fa23d3bb10c2")
+}
+
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentView()
+  }
 }

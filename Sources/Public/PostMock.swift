@@ -79,6 +79,10 @@ public final class PostMock: ObservableObject {
   public func configurate(with config: Config) {
     self.config = config
   }
+
+  public func clearAllMocks() {
+    PostmanRequestsMocks.shared.clearAll()
+  }
 }
 
 

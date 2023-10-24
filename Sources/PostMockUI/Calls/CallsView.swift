@@ -75,12 +75,14 @@ struct CallsView: View {
       .padding(.horizontal)
     }
     .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button("", systemImage: "trash") {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
           calls = []
           Task {
             await dictionary.clear()
           }
+        } label: {
+          Image(systemName: "trash")
         }
       }
     }

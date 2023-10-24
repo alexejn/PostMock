@@ -60,7 +60,7 @@ struct ConfigurationsView: View {
         Text("Stored")
       }
 
-      Button("Add New", systemImage: "plus") {
+      Button("Add New") {
         isPresented.toggle()
       }
     }
