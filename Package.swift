@@ -11,14 +11,11 @@ let package = Package(
     products: [
         .library(name: "PostMock", targets: ["PostMock"])
     ],
-    dependencies: [
-    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "PostMock",
-            dependencies: [],
             path: "Sources"),
         .testTarget(
             name: "PostMockTests",

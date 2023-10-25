@@ -41,11 +41,11 @@ struct RequestLabel: View {
 
 extension View {
   func overlayIOS14<V>(alignment: Alignment = .center, @ViewBuilder content: () -> V) -> some View where V : View {
-    if #available(iOS 15.0, *) {
-      return self.overlay(alignment: alignment, content: content)
-    } else {
+//    if #available(iOS 15.0, *) {
+//      return self.overlay(alignment: alignment, content: content)
+//    } else {
       return self.overlay(content(), alignment: alignment)
-    }
+//    }
   }
 }
 
