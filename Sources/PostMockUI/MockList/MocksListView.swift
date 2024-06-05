@@ -6,7 +6,7 @@ import SwiftUI
 
 struct CurrentMocksView: View {
 
-  @EnvironmentObject var mocks: PostmanRequestsMocks
+  @EnvironmentObject var mocks: MockStorage
 
   var body: some View {
     ScrollView {
@@ -36,6 +36,6 @@ struct CurrentMocksView: View {
 struct CurrentMocksView_Previews: PreviewProvider {
   static var previews: some View {
     CurrentMocksView()
-      .environmentObject(PostmanRequestsMocks.shared)
+      .environmentObject(MockStorage.shared)
   }
 }

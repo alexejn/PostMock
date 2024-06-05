@@ -7,20 +7,6 @@ import SwiftUI
 struct PostmanSettingsView: View {
   @EnvironmentObject var model: PostMock
 
-  @ViewBuilder
-  private func labeledContent(_ title: String, value: String) -> some View {
-    if #available(iOS 16.0, *) {
-      LabeledContent(title, value: value)
-    } else {
-      HStack {
-        Text("\(title):")
-          .bold()
-        Text(value)
-          .font(.footnote)
-      }
-    }
-  }
-
   var body: some View {
     Form {
       Section {
@@ -33,19 +19,12 @@ struct PostmanSettingsView: View {
 
         NavigationLink {
           CurrentMocksView()
-            .environmentObject(PostmanRequestsMocks.shared)
+            .environmentObject(MockStorage.shared)
         } label: {
-          labeledContent("Current mocks", value: "\(PostmanRequestsMocks.shared.mocked.count)")
-        }
-      }
-
-      Section(header: Text("Placeholders")) {
-        ForEach(Array(PostMock.shared.placeholderValues.keys), id: \.self) { key in
-          labeledContent(key, value: PostMock.shared.value(forPlaceholder: key) ?? "")
+          LabeledContent(title: "Current mocks", value: "\(MockStorage.shared.mocked.count)")
         }
       }
     }
-    .navigationTitle("Settings")
   }
 
 }
@@ -56,8 +35,7 @@ struct PostmanSettingsView_Previews: PreviewProvider {
     NavigationView {
       PostmanSettingsView()
         .environmentObject(PostMock.shared)
-        .environmentObject(PostmanRequestsMocks.shared)
+        .environmentObject(MockStorage.shared)
     }
   }
 }
-

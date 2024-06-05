@@ -10,7 +10,7 @@ struct RequestNode: View {
   @State var badge: Int = 0
 
   @EnvironmentObject var model: CollectionsViewModel
-  @EnvironmentObject var mocks: PostmanRequestsMocks
+  @EnvironmentObject var mocks: MockStorage
 
   var header: some View {
     RequestLabel(name: item.name,
@@ -57,7 +57,7 @@ struct RequestNode: View {
 
 struct RequestNode_Previews: PreviewProvider {
   static let req = CollectionItems.Item.authorize
-  static let mocks = PostmanRequestsMocks()
+  static let mocks = MockStorage()
   static let collectionModel = CollectionsViewModel(.sample)
   
   static var previews: some View {

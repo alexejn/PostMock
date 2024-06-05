@@ -8,17 +8,20 @@ import PostMock
 struct ContentView: View {
   var body: some View {
     NavigationView {
-      CategoriesListView()
+      DogsList()
     }
     .onAppear {
       PostMock.shared.configurate(with: .example)
       PostMock.shared.isEnabled = true
+      PostMock.shared.environment.set(value: "https://dogapi.dog",
+                                      scope: .request,
+                                      for: "host")
     }
   }
 }
 
 extension PostMock.Config {
-  static var example = Self(apiKey: "PMAK" + "-651d735b267ab40031e" + "bbbe8-b7109f56a916e1b447e41f84e88575f00d",
+  static var example = Self(apiKey: "PMAK" + "-651d735b267ab40031ebbbe8" + "-1614e1ff4c7bdb777cdee5187dd2722c61",
                             workspaceID: "f2c801d5-9bbd-4d5e-8984-fa23d3bb10c2")
 }
 

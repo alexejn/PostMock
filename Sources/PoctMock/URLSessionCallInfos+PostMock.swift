@@ -5,10 +5,10 @@
 import Foundation
 
 extension URLRequestCallInfos {
-  func calls(by pattern: PostmanRequestPattern) -> [HTTPCallInfo] {
+  func calls(by template: RequestTemplate) -> [HTTPCallInfo] {
 
     info.values.filter { info in
-      pattern.match(request: info.request)
+      template.isMathing(request: info.request)
     }
   }
 }

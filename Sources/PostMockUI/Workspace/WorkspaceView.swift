@@ -8,7 +8,7 @@ import SwiftUI
 struct WorkspaceView: View {
 
   @StateObject var model: WorkspaceModel
-  @EnvironmentObject var mocks: PostmanRequestsMocks
+  @EnvironmentObject var mocks: MockStorage
   @EnvironmentObject var postMock: PostMock
 
   public var body: some View {
@@ -73,6 +73,16 @@ struct WorkspaceView: View {
       }
       .toolbar {
 
+        ToolbarItem(placement: .navigationBarTrailing) {
+          NavigationLink {
+            EnvironmentView()
+              .environmentObject(mocks)
+              .environmentObject(postMock)
+          } label: {
+            Image(systemName: "chandelier")
+          }
+        }
+
         ToolbarItem(placement: .navigationBarLeading) {
           Toggle("Mock", isOn: $postMock.mockIsEnabled)
             .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
@@ -118,6 +128,6 @@ struct WorkspaceView_Previews: PreviewProvider {
   static var previews: some View {
     WorkspaceView(model: WorkspaceModel(workspaceID: PostMock.Config.empty.workspaceID))
       .environmentObject(PostMock.shared)
-      .environmentObject(PostmanRequestsMocks.shared)
+      .environmentObject(MockStorage.shared)
   }
 }

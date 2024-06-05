@@ -51,9 +51,9 @@ final class CollectionsViewModel: ObservableObject {
         count += cnt
       }
       return count
-    } else if let pattern = item.pattern {
+    } else if let template = item.requestTemplate {
 
-      count = await URLRequestCallInfos.shared.calls(by: pattern).count
+      count = await URLRequestCallInfos.shared.calls(by: template).count
     }
     return count
   }

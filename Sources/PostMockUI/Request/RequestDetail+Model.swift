@@ -10,14 +10,14 @@ final class RequestDetailViewModel: ObservableObject {
   @Published var calls: [HTTPCallInfo] = []
   let item: CollectionItems.Item
   let request: CollectionItems.Request
-  private let pattern: PostmanRequestPattern
+  private let template: RequestTemplate
 
   init(item: CollectionItems.Item, request: CollectionItems.Request) {
     self.item = item
     self.request = request
-    self.pattern = request.pattern(requestUID: item.uid)
+    self.template = request.template(requestUID: item.uid)
     Task { @MainActor in
-      self.calls = await URLRequestCallInfos.shared.calls(by: pattern).sorted(by: { $0.start > $1.start })
+      self.calls = await URLRequestCallInfos.shared.calls(by: template).sorted(by: { $0.start > $1.start })
     }
   }
 

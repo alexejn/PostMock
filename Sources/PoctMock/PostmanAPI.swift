@@ -113,8 +113,8 @@ struct CollectionReponse: Decodable {
         response?.map { $0.name } ?? []
       }
 
-      var pattern: PostmanRequestPattern? {
-        request?.pattern(requestUID: uid)
+      var requestTemplate: RequestTemplate? {
+        request?.template(requestUID: uid)
       }
     }
 
@@ -174,10 +174,9 @@ struct CollectionReponse: Decodable {
         self.url = url ?? .empty
       }
 
-      func pattern(requestUID: String) -> PostmanRequestPattern {
+      func template(requestUID: String) -> RequestTemplate {
         .init(method: method,
-              hostPlaceholder: url.host.first ?? "",
-              path: "/" + url.path.joined(separator: "/"),
+              url: url.raw,
               requestUID: requestUID)
       }
     }

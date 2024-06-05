@@ -6,7 +6,7 @@ import SwiftUI
 
 public struct PostMockView: View {
   @StateObject var model = PostMock.shared
-  @StateObject var mocks = PostmanRequestsMocks.shared
+  @StateObject var mocks = MockStorage.shared
 
   public init() {}
 

@@ -9,7 +9,7 @@ struct ResponseDetailView: View {
   var response: CollectionItems.Response
 
   @EnvironmentObject var model: CollectionsViewModel
-  @EnvironmentObject var mocks: PostmanRequestsMocks
+  @EnvironmentObject var mocks: MockStorage
   @State private var fullInfo: Bool = false
 
   private var usedForMock: Bool { mocks.isMocked(requestUID: item.uid,
@@ -24,18 +24,21 @@ struct ResponseDetailView: View {
               .bold()
           }
           Spacer()
-          if let pattern = item.pattern {
+          if let template = item.requestTemplate {
             if usedForMock {
               Button("UnMock") {
                 withAnimation {
-                  mocks.removeMock(for: pattern)
+                  mocks.removeMock(for: template)
                 }
               }
               .foregroundColor(.red)
             } else {
               Button("Mock") {
                 withAnimation {
-                  mocks.setMock(pattern: pattern, mockResponseID: response.uid)
+                  let mock = Mock(requestTemplate: template,
+                                  responseID: response.uid,
+                                  placeholders: [:])
+                  mocks.set(mock: mock)
                 }
               }
               .foregroundColor(.blue)
@@ -59,13 +62,13 @@ struct ResponseDetailView: View {
           }
         }
 
-        if let pattern = item.pattern, usedForMock {
+        if let template = item.requestTemplate, usedForMock {
           Divider()
           if fullInfo {
             VStack(alignment: .leading) {
               Text("Mocked if request match template")
                 .fontWeight(.light)
-              Text(pattern.actualDescription)
+              Text(template.actualDescription)
                 .fontWeight(.medium)
                 .font(.callout)
                 .lineLimit(0)
@@ -85,7 +88,7 @@ struct ResponseDetailView: View {
                 fullInfo.toggle()
               }
             }) {
-              Text(pattern.description)
+              Text(template.description)
                 .foregroundColor(.blue)
                 .font(.callout)
             }
@@ -113,7 +116,7 @@ struct ResponseDetailView_Previews: PreviewProvider {
   static let req = CollectionItems.Item.authorize
 
   static let model = CollectionsViewModel(.sample)
-  static let mocks = PostmanRequestsMocks()
+  static let mocks = MockStorage()
 
   static var previews: some View {
     Text("Demo")

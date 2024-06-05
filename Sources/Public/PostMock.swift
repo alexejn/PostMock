@@ -31,7 +31,11 @@ public final class PostMock: ObservableObject {
 
   @Published var configured: Bool = false
 
+  @UserDefault(key: "postmock.mockServer", defaultValue: nil) 
   public var mockServer: MockServer?
+
+  public private(set) var environment: PostMockEnvironment = .shared
+
   private let storage = Storage(logger: .postmock)
 
   var storedConfigs: [Config] = [] {
@@ -49,13 +53,6 @@ public final class PostMock: ObservableObject {
 
   @AppStorage("postmock.configID") private var configID: String? {
     didSet { objectWillChange.send() }
-  }
-  public typealias PlaceholderValueProvider = () -> String
-
-  public var placeholderValues: [String: PlaceholderValueProvider] = [:]
-
-  func value(forPlaceholder: String) -> String? {
-    placeholderValues[forPlaceholder]?()
   }
 
   private init() { 
@@ -81,7 +78,7 @@ public final class PostMock: ObservableObject {
   }
 
   public func clearAllMocks() {
-    PostmanRequestsMocks.shared.clearAll()
+    MockStorage.shared.clearAll()
   }
 }
 

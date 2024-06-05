@@ -14,9 +14,9 @@ extension URLRequest {
           let requestUrl = url,
           let host = requestUrl.host else { return false }
 
-    guard let mockResponseID = PostmanRequestsMocks.shared.mockResponseID(for: self) else { return false }
+    guard let mock = MockStorage.shared.mock(for: self) else { return false }
 
-    setValue(mockResponseID, forHTTPHeaderField: PostMock.Headers.xMockResponseId)
+    setValue(mock.responseID, forHTTPHeaderField: PostMock.Headers.xMockResponseId)
     setValue(PostMock.shared.config.apiKey, forHTTPHeaderField: PostMock.Headers.xApiKey)
     setValue(host, forHTTPHeaderField: PostMock.Headers.xMockedHost)
 

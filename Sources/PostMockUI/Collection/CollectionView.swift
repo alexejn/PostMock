@@ -7,7 +7,7 @@ import SwiftUI
 struct CollectionView: View {
 
   @StateObject var model: CollectionsViewModel
-  @EnvironmentObject var mocks: PostmanRequestsMocks
+  @EnvironmentObject var mocks: MockStorage
   @EnvironmentObject var postmock: PostMock
   private var collection: Workspace.Collection
 

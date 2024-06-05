@@ -8,7 +8,7 @@ import os
 
 @propertyWrapper
 /// Обертка над UserDefaults
-struct UserDefault<Value: Codable> {
+public struct UserDefault<Value: Codable> {
   let key: String
   let defaultValue: Value
   var container: UserDefaults
