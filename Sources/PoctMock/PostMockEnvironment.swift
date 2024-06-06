@@ -44,6 +44,12 @@ public final class PostMockEnvironment: ObservableObject {
     providers.removeValue(forKey: key)
   }
 
+  public func clear() {
+    values.removeAll()
+    scopes.removeAll()
+    providers.removeAll()
+  }
+
   func keys(for scope: Scope) -> [String] {
     values.keys.filter { scopes[$0] == scope }
   }

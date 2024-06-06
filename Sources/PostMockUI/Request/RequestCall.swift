@@ -6,7 +6,7 @@ import SwiftUI
 
 struct CallItem: View {
 
-  let call: HTTPCallInfo
+  let call: HTTPCall
 
   var body: some View {
 
@@ -122,7 +122,7 @@ struct CallItem_Previews: PreviewProvider {
   }
 }
 
-extension HTTPCallInfo {
+extension HTTPCall {
 
   var hostString: String {
     guard let host = request.url?.host else { return "" }
@@ -160,8 +160,8 @@ extension URLRequest {
   }
 }
 
-extension HTTPCallInfo {
+extension HTTPCall {
 
-  static var google = HTTPCallInfo(callID: UUID(),
+  static var google = HTTPCall(callID: UUID(),
                                     request: .sample)
 }

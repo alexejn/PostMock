@@ -12,10 +12,6 @@ struct ContentView: View {
     }
     .onAppear {
       PostMock.shared.configurate(with: .example)
-      PostMock.shared.isEnabled = true
-      PostMock.shared.environment.set(value: "https://dogapi.dog",
-                                      scope: .request,
-                                      for: "host")
     }
   }
 }

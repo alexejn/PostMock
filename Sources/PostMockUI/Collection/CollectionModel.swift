@@ -53,7 +53,7 @@ final class CollectionsViewModel: ObservableObject {
       return count
     } else if let template = item.requestTemplate {
 
-      count = await URLRequestCallInfos.shared.calls(by: template).count
+      count = await HTTPCallStorage.shared.calls(by: template).count
     }
     return count
   }

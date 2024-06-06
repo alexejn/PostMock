@@ -26,7 +26,7 @@ public extension PostMock {
   func decodeError(callID: String, error: Error) {
     guard let uuid = UUID(uuidString: callID) else { return }
     Task {
-      await URLRequestCallInfos.shared.dateDecodeError(error, callID: uuid)
+      await HTTPCallStorage.shared.dateDecodeError(error, callID: uuid)
     }
   }
 }

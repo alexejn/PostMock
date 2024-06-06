@@ -7,7 +7,7 @@ import SwiftUI
 
 final class RequestDetailViewModel: ObservableObject {
 
-  @Published var calls: [HTTPCallInfo] = []
+  @Published var calls: [HTTPCall] = []
   let item: CollectionItems.Item
   let request: CollectionItems.Request
   private let template: RequestTemplate
@@ -17,7 +17,7 @@ final class RequestDetailViewModel: ObservableObject {
     self.request = request
     self.template = request.template(requestUID: item.uid)
     Task { @MainActor in
-      self.calls = await URLRequestCallInfos.shared.calls(by: template).sorted(by: { $0.start > $1.start })
+      self.calls = await HTTPCallStorage.shared.calls(by: template).sorted(by: { $0.start > $1.start })
     }
   }
 

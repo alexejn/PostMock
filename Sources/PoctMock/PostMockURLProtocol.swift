@@ -8,7 +8,7 @@ open class PostMockURLProtocol: URLProtocol {
   static let internalKey = "com.postmock.internal"
   static let callId = "com.postmock.callID"
 
-  private var info: HTTPCallInfo?
+  private var info: HTTPCall?
   private var response: URLResponse?
   private var responseData: NSMutableData?
 
@@ -112,7 +112,7 @@ extension PostMockURLProtocol: URLSessionDataDelegate {
 
     if let info = info {
       Task {
-        await URLRequestCallInfos.shared.set(info)
+        await HTTPCallStorage.shared.set(info)
       }
     }
 

@@ -75,6 +75,7 @@ public final class PostMock: ObservableObject {
 
   public func configurate(with config: Config) {
     self.config = config
+    self.isEnabled = true 
   }
 
   public func clearAllMocks() {

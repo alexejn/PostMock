@@ -11,7 +11,7 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
   let requestUID: String
 
   public var description: String { "\(method.uppercased()) \(urlTemplate)" }
-  public var actualDescription: String { "\(method.uppercased()) \(urlTemplate.withValues(for: .request))" }
+  public var actualDescription: String { "\(method.uppercased()) \(urlTemplateWithValues())" }
 
   public init(method: String, url: String, requestUID: String) {
     self.method = method
@@ -19,61 +19,37 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
     self.requestUID = requestUID
   }
 
+  private func urlTemplateWithValues() -> String {
+    guard urlTemplate.placeholders.isEmpty == false else { return urlTemplate.url }
+
+    var string = urlTemplate.url
+    for placeholder in urlTemplate.placeholders {
+      guard let value = PostMock.shared.environment[placeholder, .request] else { continue }
+      string.replacedPlaceholder(placeholder, with: value)
+    }
+    return string
+  }
+
   public func isMathing(request: URLRequest) -> Bool {
-    guard let url = request.url,
+    guard var url = request.url,
           let method = request.httpMethod  else { return false }
 
-    let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
-    let originalMockedHost = request.value(forHTTPHeaderField:PostMock.Headers.xMockedHost)
-
-    return isMathing(url: url, method: method, requestUID: requestUID, originalMockedHost: originalMockedHost)
-  }
-
-  private func isMathing(url: URL, method: String, requestUID: String?, originalMockedHost: String?) -> Bool {
-    if let requestUID {
+    if let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId) {
       return self.requestUID == requestUID
     }
+
+    if let mockedHost = request.value(forHTTPHeaderField:PostMock.Headers.xMockedHost), let host = url.host {
+      url = URL(string: url.absoluteString.replacingOccurrences(of: host, with: mockedHost))!
+    }
+
     guard method == self.method else { return false }
 
-    let urlTemplate = urlTemplate.withValues(for: .request)
+    var urlTemplate = urlTemplateWithValues()
+    urlTemplate.appendSchemeIfDontHave(scheme: url.scheme)
 
-    return matchURL(url.absoluteString, urlTemplate: urlTemplate)
+    let result = String.matchComponents(url: url.absoluteString, 
+                                        template: urlTemplate)
+
+    return result
   }
-
-  // swiftlint:disable all
-  private func matchURL(_ url: String, urlTemplate: String) -> Bool {
-    let templateComponents = urlTemplate.components(separatedBy: "/")
-    let urlComponents = url.components(separatedBy: "/")
-
-    guard urlComponents.count == templateComponents.count else {
-      return false
-    }
-
-    for (index, templateComponent) in templateComponents.enumerated() {
-      let urlComponent = urlComponents[index]
-
-      if templateComponent.hasPrefix("{{") && templateComponent.hasSuffix("}}") {
-        // Если компонент шаблона находится в фигурных скобках
-        let variablePattern = templateComponent.dropFirst(2).dropLast(2)
-        let regexString = "[a-zA-Z0-9]+"
-
-        if variablePattern.isEmpty {
-          // Пустой шаблон означает любую последовательность
-          continue
-        } else {
-          let regex = try! NSRegularExpression(pattern: regexString)
-          let range = NSRange(location: 0, length: urlComponent.utf16.count)
-          guard regex.firstMatch(in: urlComponent, options: [], range: range) != nil else {
-            return false
-          }
-        }
-      } else if templateComponent != urlComponent {
-        // Если компоненты не совпадают и не являются переменными
-        return false
-      }
-    }
-
-    return true
-  }
-  // swiftlint:enable all
 }

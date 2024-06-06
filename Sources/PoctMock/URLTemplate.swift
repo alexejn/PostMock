@@ -41,16 +41,4 @@ struct URLTemplate: Codable, Hashable {
 
       return keys
   }
-
-  func withValues(for scope: PostMockEnvironment.Scope) -> String {
-    guard placeholders.isEmpty == false else { return url }
-
-    var string = url
-    for placeholder in placeholders {
-      guard let value = PostMock.shared.environment[placeholder, scope] else { continue }
-      string = string.replacingOccurrences(of: "{{\(placeholder)}}", with: value)
-    }
-
-    return string
-  }
 }

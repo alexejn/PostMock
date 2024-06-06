@@ -8,21 +8,6 @@ extension UserDefaults {
   static let mocks = UserDefaults(suiteName: "PostmanMocks")!
 }
 
-public typealias MockResponseID = String
-
-public struct Mock: Codable {
-  public typealias Placeholders = [String: PlaceholderValue]
-
-  public enum PlaceholderValue: Codable {
-    case environment
-    case value(String)
-  }
-
-  public let requestTemplate: RequestTemplate
-  public let responseID: MockResponseID
-  public let placeholders: Placeholders
-}
-
 final class MockStorage: ObservableObject {
 
   private var mocks: [RequestTemplate: Mock] {
@@ -71,10 +56,6 @@ final class MockStorage: ObservableObject {
   }
 
   func mock(for urlRequest: URLRequest) -> Mock? {
-    if let matchedMockKey = mocks.keys.first(where: { $0.isMathing(request: urlRequest) }) {
-      return mocks[matchedMockKey]
-    } else {
-      return nil
-    }
+    mocks.values.first(where: { $0.isMathing(request: urlRequest) })
   }
 }

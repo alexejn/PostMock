@@ -6,7 +6,7 @@ import SwiftUI
 
 private struct CallsViewItem: View {
 
-  let call: HTTPCallInfo
+  let call: HTTPCall
 
   var body: some View {
     VStack(alignment: .leading) {
@@ -54,9 +54,9 @@ private struct CallsViewItem: View {
 
 struct CallsView: View {
 
-  @State var calls: [HTTPCallInfo] = []
+  @State var calls: [HTTPCall] = []
 
-  private let dictionary = URLRequestCallInfos.shared
+  private let dictionary = HTTPCallStorage.shared
 
 
   var body: some View {

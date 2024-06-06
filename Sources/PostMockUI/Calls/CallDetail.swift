@@ -40,7 +40,7 @@ private struct HeadersView: View {
 
 struct CallDetailView: View {
 
-  let call: HTTPCallInfo
+  let call: HTTPCall
 
   @State var selected: Int = 1
 
@@ -92,7 +92,7 @@ struct CallDetailView: View {
 struct CallDetail_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
-      CallDetailView(call: HTTPCallInfo(callID: UUID(),
+      CallDetailView(call: HTTPCall(callID: UUID(),
                                         request: .init(url: .linkToPostman(requestID: "1"))))
     }
   }
