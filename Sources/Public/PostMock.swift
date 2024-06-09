@@ -3,6 +3,7 @@
 // Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import Foundation
+import Combine
 import SwiftUI
 import os
 

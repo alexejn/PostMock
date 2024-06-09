@@ -21,7 +21,7 @@ struct PostMockButton: ViewModifier {
         .padding(insets)
         .buttonStyle(.plain)
       }
-      .sheet(isPresented: $presented, content: {
+      .fullScreenCover(isPresented: $presented, content: {
         PostMockView()
       })
   }

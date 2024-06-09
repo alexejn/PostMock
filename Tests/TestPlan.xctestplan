@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1270DE58-898D-45FD-9067-7572E304BE4F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:PostMockSDK.xcodeproj",
+        "identifier" : "4FA35E912C13637C00040578",
+        "name" : "PostMockTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -4,22 +4,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "PostMock",
-    platforms: [
-            .iOS(.v14)
-        ],
-    products: [
-        .library(name: "PostMock", targets: ["PostMock"])
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "PostMock",
-            path: "Sources"),
-        .testTarget(
-            name: "PostMockTests",
-            dependencies: ["PostMock"], 
-            path: "Tests"),
-    ]
+  name: "PostMock",
+  platforms: [
+    .iOS(.v14)
+  ],
+  products: [
+    .library(name: "PostMock", targets: ["PostMock"]),
+    .library(name: "Pulse", targets: ["Pulse"]),
+    .library(name: "PulseUI", targets: ["PulseUI"])
+  ],
+  targets: [
+    // Targets are the basic building blocks of a package, defining a module or a test suite.
+    // Targets can depend on other targets in this package and products from dependencies.
+    .target(
+      name: "PostMock",
+      dependencies: ["PulseUI"],
+      path: "Sources"),
+    .testTarget(
+      name: "PostMockTests",
+      dependencies: ["PostMock"],
+      path: "Tests"),
+    .target(
+      name: "Pulse",
+      path: "Pulse"),
+    .target(
+      name: "PulseUI",
+      dependencies: ["Pulse"],
+      path: "PulseUI")
+  ]
 )

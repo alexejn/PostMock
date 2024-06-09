@@ -4,6 +4,7 @@
 
 
 import SwiftUI
+import PulseUI
 
 struct WorkspaceView: View {
 
@@ -93,14 +94,22 @@ struct WorkspaceView: View {
                        reload: model.reload)
         }
 
+//        ToolbarItem(placement: .navigationBarTrailing) {
+//          NavigationLink {
+//            CallsView()
+//              .environmentObject(model)
+//              .environmentObject(mocks)
+//              .environmentObject(postMock)
+//          } label: {
+//            Image(systemName: "list.bullet.rectangle")
+//          }
+//        }
+
         ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink {
-            CallsView()
-              .environmentObject(model)
-              .environmentObject(mocks)
-              .environmentObject(postMock)
+           ConsoleView()
           } label: {
-            Image(systemName: "list.bullet.rectangle")
+            Image(systemName: "network")
           }
         }
 
