@@ -6,14 +6,14 @@ import SwiftUI
 
 struct CurrentMocksView: View {
 
-  @EnvironmentObject var mocks: MockStorage
+  @ObservedObject var mocks: MockStorage = .shared
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading) {
-        ForEach(mocks.mocked, id: \.self) { pattern in
+        ForEach(mocks.mocked, id: \.self) { template in
           HStack {
-            Text(pattern.description)
+            Text(template.actualDescription)
             Spacer()
           }
         }
@@ -36,6 +36,5 @@ struct CurrentMocksView: View {
 struct CurrentMocksView_Previews: PreviewProvider {
   static var previews: some View {
     CurrentMocksView()
-      .environmentObject(MockStorage.shared)
   }
 }

@@ -9,9 +9,7 @@ let package = Package(
     .iOS(.v14)
   ],
   products: [
-    .library(name: "PostMock", targets: ["PostMock"]),
-    .library(name: "Pulse", targets: ["Pulse"]),
-    .library(name: "PulseUI", targets: ["PulseUI"])
+    .library(name: "PostMock", targets: ["PostMock"])
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,13 +21,6 @@ let package = Package(
     .testTarget(
       name: "PostMockTests",
       dependencies: ["PostMock"],
-      path: "Tests"),
-    .target(
-      name: "Pulse",
-      path: "Pulse"),
-    .target(
-      name: "PulseUI",
-      dependencies: ["Pulse"],
-      path: "PulseUI")
+      path: "Tests")
   ]
 )

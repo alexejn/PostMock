@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct ConfigurationsView: View {
-  @EnvironmentObject var model: PostMock
+  @ObservedObject var model: PostMock = .shared
   @State var isPresented:  Bool = false
   @State var newConfig: PostMock.Config = .empty
 
@@ -37,27 +37,38 @@ struct ConfigurationsView: View {
     }
   }
 
+  private func configItem(config: PostMock.Config) -> some View {
+    ConfigItem(config: config, selected: model.config == config)
+      .onTapGesture {
+        model.config = config
+      }
+  }
+
   var body: some View {
     List {
-      if model.config != .empty && !model.storedConfigs.contains(model.config) {
+      if model.baseConfig != .empty  {
         Section {
-          ConfigItem(config: model.config, selected: true)
+          configItem(config: model.baseConfig)
         } header: {
-          Text("Manual")
+          Text("Base")
         }
       }
 
-      Section {
-        ForEach(model.storedConfigs) { config in
-          ConfigItem(config: config, selected: config == model.config)
-            .onTapGesture {
-              model.configurate(with: config)
+      if !model.storedConfigs.isEmpty {
+        Section {
+          ForEach(model.storedConfigs) { config in
+            configItem(config: config)
+          }.onDelete { indexSet in
+            let index = indexSet[indexSet.startIndex]
+            let config = model.storedConfigs[index]
+            model.storedConfigs.remove(atOffsets: indexSet)
+            if model.config == config {
+              model.config = model.baseConfig
             }
-        }.onDelete { indexSet in
-          model.storedConfigs.remove(atOffsets: indexSet)
+          }
+        } header: {
+          Text("Custom")
         }
-      } header: {
-        Text("Stored")
       }
 
       Button("Add New") {
@@ -74,7 +85,7 @@ struct ConfigurationsView: View {
         }
         Button("Save") {
           model.storedConfigs.append(newConfig)
-          model.configurate(with: newConfig)
+          model.config = newConfig
           isPresented = false
         }.disabled(!newConfig.valid)
       })
@@ -89,7 +100,6 @@ struct ConfigurationsView_Previews: PreviewProvider {
     PostMock.shared.storedConfigs = [ .sample1, .sample2]
     return NavigationView {
       ConfigurationsView()
-        .environmentObject(PostMock.shared)
     }
   }
 }

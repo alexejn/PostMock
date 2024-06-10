@@ -3,13 +3,11 @@
 // Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import Foundation
-import Pulse
 
 open class PostMockURLProtocol: URLProtocol {
   static let internalKey = "com.postmock.internal"
   static let callId = "com.postmock.callID"
 
-  let logger = NetworkLogger()
   private var info: HTTPCall?
   private var response: URLResponse?
   private var responseData: NSMutableData?
@@ -54,7 +52,6 @@ open class PostMockURLProtocol: URLProtocol {
     URLProtocol.setProperty(true, forKey: PostMockURLProtocol.internalKey, in: mutableRequest)
     let task = session.dataTask(with: mutableRequest as URLRequest)
     task.resume()
-    logger.logTaskCreated(task)
   }
 
   override public func stopLoading() {
@@ -80,7 +77,6 @@ extension PostMockURLProtocol: URLSessionDataDelegate {
 
   public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
     responseData?.append(data)
-    logger.logDataTask(dataTask, didReceive: data)
     client?.urlProtocol(self, didLoad: data)
   }
 
@@ -106,8 +102,6 @@ extension PostMockURLProtocol: URLSessionDataDelegate {
       return
     }
 
-    logger.logTask(task, didCompleteWithError: error)
-
     if error != nil {
       info?.error = error
     } else if let response = response {
@@ -119,7 +113,6 @@ extension PostMockURLProtocol: URLSessionDataDelegate {
 
     if let info = info {
       Task {
-//        logger.
         await HTTPCallStorage.shared.set(info)
       }
     }
@@ -139,10 +132,6 @@ extension PostMockURLProtocol: URLSessionDataDelegate {
 
     client?.urlProtocol(self, wasRedirectedTo: updatedRequest, redirectResponse: response)
     completionHandler(updatedRequest)
-  }
-
-  public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-      logger.logTask(task, didFinishCollecting: metrics)
   }
 
   public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {

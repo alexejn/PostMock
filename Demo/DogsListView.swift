@@ -5,11 +5,10 @@
 
 import Foundation
 import SwiftUI
-import PostMockSDK
 import Observation
 
 struct DogsList: View {
-  @State private var dogs = Dogs()
+  @StateObject private var dogs = Dogs()
 
   var body: some View {
     NavigationStack {
@@ -19,21 +18,16 @@ struct DogsList: View {
         }
 
         List {
-          Section {
-            HStack {
-              Button("Reload") {
-                Task {
-                  await dogs.load()
-                }
-              }
-            }
+
+          Section("Interesting fact...") {
+            FactView()
           }
-          .foregroundColor(.mint)
-          .buttonStyle(.bordered)
 
           Section("Breeds") {
             ForEach(dogs.breed, id: \.id) { breed in
-              BreedView(breed: breed)
+              NavigationLink(breed.attributes.name)  {
+                BreedView(breedID: breed.id)
+              }
             }
           }
         }
@@ -43,21 +37,48 @@ struct DogsList: View {
         }
       }
       .navigationBarTitleDisplayMode(.inline)
-      .navigationTitle("Dogs API")
-      .task {
-        await dogs.load()
+      .navigationTitle("Dogs App")
+      .refreshable {
+        Task {
+          await dogs.load(page: dogs.currentPage)
+        }
       }
-      .overlayPostMockButton()
+      .toolbar {
+
+        
+        ToolbarItem(placement: .bottomBar) {
+          HStack {
+            
+            Button("Prev") {
+              Task {
+                await dogs.load(page: dogs.currentPage-1)
+              }
+            }
+            .disabled(dogs.currentPage == 1)
+            Text("\(dogs.currentPage)")
+            Button("Next") {
+              Task {
+                await dogs.load(page: dogs.currentPage+1)
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
 
-@Observable class Dogs {
-  var breed: [Breed] = []
-  var isLoading: Bool = false
-  var message: String?
+final class Dogs: ObservableObject {
+ @Published var breed: [Breed] = []
+ @Published var isLoading: Bool = false
+ @Published var message: String?
+ private(set) var currentPage = 1
 
-  init() {}
+  init() {
+    Task {
+      await load()
+    }
+  }
 
   @MainActor
   func load() async {
@@ -68,25 +89,54 @@ struct DogsList: View {
     do {
       /// Used shared url session
       let (data, _) = try await URLSession.shared.data(for: req)
-      self.breed = try JSONDecoder().decode(BreedResponse.self, from: data).data
+      self.breed = try JSONDecoder().decode(BreedsResponse.self, from: data).data
+    } catch {
+      message = "\(error)"
+    }
+  }
+
+  @MainActor
+  func load(page: Int) async {
+    defer { isLoading = false }
+    breed = []
+    isLoading = true
+    currentPage = page
+    let req = URLRequest(url: URL(string: "https://dogapi.dog/api/v2/breeds?page[number]=\(page)")!)
+    do {
+      /// Used shared url session
+      let (data, _) = try await URLSession.shared.data(for: req)
+      self.breed = try JSONDecoder().decode(BreedsResponse.self, from: data).data
     } catch {
       message = "\(error)"
     }
   }
 }
 
-struct BreedResponse: Codable {
+struct BreedsResponse: Codable {
   let data: [Breed]
 }
 
+struct BreedResponse: Codable {
+  let data: Breed
+}
+
+
 struct Breed: Codable {
-  let id: String
+  typealias ID = String
+  let id: ID
   let type: String
   let attributes: Attributes
 
   struct Attributes: Codable {
     let name: String
     let description: String
+    let hypoallergenic: Bool
+    let life: Life
+
+    struct Life: Codable {
+      let min: Int
+      let max: Int
+    }
   }
 }
 

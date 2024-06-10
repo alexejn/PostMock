@@ -4,7 +4,6 @@
 
 
 import SwiftUI
-import PulseUI
 
 struct WorkspaceView: View {
 
@@ -74,15 +73,15 @@ struct WorkspaceView: View {
       }
       .toolbar {
 
-        ToolbarItem(placement: .navigationBarTrailing) {
-          NavigationLink {
-            EnvironmentView()
-              .environmentObject(mocks)
-              .environmentObject(postMock)
-          } label: {
-            Image(systemName: "chandelier")
-          }
-        }
+//        ToolbarItem(placement: .navigationBarTrailing) {
+//          NavigationLink {
+//            EnvironmentView()
+//              .environmentObject(mocks)
+//              .environmentObject(postMock)
+//          } label: {
+//            Image(systemName: "chandelier")
+//          }
+//        }
 
         ToolbarItem(placement: .navigationBarLeading) {
           Toggle("Mock", isOn: $postMock.mockIsEnabled)
@@ -94,25 +93,16 @@ struct WorkspaceView: View {
                        reload: model.reload)
         }
 
-//        ToolbarItem(placement: .navigationBarTrailing) {
-//          NavigationLink {
-//            CallsView()
-//              .environmentObject(model)
-//              .environmentObject(mocks)
-//              .environmentObject(postMock)
-//          } label: {
-//            Image(systemName: "list.bullet.rectangle")
-//          }
-//        }
-
         ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink {
-           ConsoleView()
+            CallsView()
+              .environmentObject(model)
+              .environmentObject(mocks)
+              .environmentObject(postMock)
           } label: {
-            Image(systemName: "network")
+            Image(systemName: "list.bullet.rectangle")
           }
         }
-
 
         ToolbarItem(placement: .navigationBarTrailing) {
           NavigationLink {

@@ -3,30 +3,6 @@
 // Copyright © 2023 Alexey Nenastyev (github.com/alexejn). All Rights Reserved.
 
 import SwiftUI
-import PulseUI
-
-//public struct PostMockView: View {
-//  public var body: some View {
-//    TabView {
-//      _PostMockView()
-//        .tabItem { Text("Mocks") }
-//
-////      NavigationView {
-////        Text("")
-////        .navigationBarTitleDisplayMode(.inline)
-////      }
-////        .tabItem { Label("Environment", systemImage:  "chandelier") }
-//
-////      NavigationView {
-////        ConsoleView()
-////        .navigationBarTitleDisplayMode(.inline)
-////      }
-////        .tabItem { Label("Network", systemImage:  "network") }
-//    }
-//
-//    .navigationBarTitleDisplayMode(.inline)
-//  }
-//}
 
 public struct PostMockView: View {
   @StateObject var model = PostMock.shared

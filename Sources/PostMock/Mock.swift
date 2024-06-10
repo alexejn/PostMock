@@ -16,9 +16,12 @@ public struct Mock: Codable {
   }
 
   public let requestTemplate: RequestTemplate
-  public let responseID: MockResponseID
-  public let placeholders: Placeholders
+  public var responseID: MockResponseID
+  public var placeholders: Placeholders
 
+  public var actualDescription: String { "\(urlTemplateWithValues())" }
+
+  
   private func urlTemplateWithValues() -> String {
     let placeholders = requestTemplate.urlTemplate.placeholders
     let url = requestTemplate.urlTemplate.url
@@ -35,6 +38,7 @@ public struct Mock: Codable {
             guard let value = PostMock.shared.environment[placeholder, .mock] else { continue }
             string.replacedPlaceholder(placeholder, with: value)
           case .value(let value):
+            guard value.isEmpty == false else { continue }
             string.replacedPlaceholder(placeholder, with: value)
         }
       }

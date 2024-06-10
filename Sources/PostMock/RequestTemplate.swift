@@ -10,8 +10,8 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
   let urlTemplate: URLTemplate
   let requestUID: String
 
-  public var description: String { "\(method.uppercased()) \(urlTemplate)" }
-  public var actualDescription: String { "\(method.uppercased()) \(urlTemplateWithValues())" }
+  public var description: String { "\(urlTemplate.url)" }
+  public var actualDescription: String { "\(urlTemplateWithValues())" }
 
   public init(method: String, url: String, requestUID: String) {
     self.method = method

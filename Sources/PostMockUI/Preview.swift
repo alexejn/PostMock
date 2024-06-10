@@ -27,9 +27,9 @@ extension CollectionItems.Item {
   }
 
   static var authorize: Self {
-    .request("v1/oath/authorize",
+    .request("{{host}}/{{api}}/oath/authorize/:usedid",
              method: "get",
-             url: "/v1/oauth/authorize",
+             url: "{{host}}/{{api}}/oath/authorize/:usedid",
              uid: "1122734-5cff63c7-7fbc-43e1-857a-09f652ef2812",
              responses: .sample(reqID: "1122734-ffff63c7-7fbc-43e1-857a-09f652ef2812", name: "200: Code"))
   }

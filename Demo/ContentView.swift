@@ -7,12 +7,14 @@ import PostMockSDK
 
 struct ContentView: View {
   var body: some View {
-    NavigationView {
-      DogsList()
-    }
-    .onAppear {
-      PostMock.shared.configurate(with: .example)
-    }
+    DogsList()
+      .overlayPostMockButton()
+      .onAppear {
+        PostMock.shared.configurate(with: .example)
+        PostMock.shared.environment.set(key: "host",
+                                        scope: .request,
+                                        provider: { "https://dogapi.dog" })
+      }
   }
 }
 

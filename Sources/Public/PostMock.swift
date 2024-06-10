@@ -35,6 +35,10 @@ public final class PostMock: ObservableObject {
   @UserDefault(key: "postmock.mockServer", defaultValue: nil) 
   public var mockServer: MockServer?
 
+  @UserDefault(key: "postmock.baseConfiguration", defaultValue: Config.empty)
+  var baseConfig: Config
+
+
   public private(set) var environment: PostMockEnvironment = .shared
 
   private let storage = Storage(logger: .postmock)
@@ -56,6 +60,7 @@ public final class PostMock: ObservableObject {
     didSet { objectWillChange.send() }
   }
 
+
   private init() { 
     restoreAndSetDefaultConfigIfCan()
   }
@@ -76,7 +81,8 @@ public final class PostMock: ObservableObject {
 
   public func configurate(with config: Config) {
     self.config = config
-    self.isEnabled = true 
+    self.baseConfig = config
+    self.isEnabled = true
   }
 
   public func clearAllMocks() {

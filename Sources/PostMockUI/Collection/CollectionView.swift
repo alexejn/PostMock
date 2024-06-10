@@ -46,9 +46,11 @@ struct CollectionView: View {
                 RequestDetailView(item: item, request: request)
                   .environment(\.isMocked, mocks.isMocked(requestUID: item.uid))
               case let .response(item, response):
-                ResponseDetailView(item: item, response: response)
-                  .environment(\.isMocked, mocks.isMocked(requestUID: item.uid,
-                                                          withResponseID: response.uid))
+                if let template = item.requestTemplate {
+                  ResponseDetailView(template: template, item: item, response: response)
+                } else {
+                  Text("No Request. Looks like bug.")
+                }
               }
             }
           }

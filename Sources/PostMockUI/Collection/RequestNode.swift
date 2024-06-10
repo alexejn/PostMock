@@ -57,7 +57,7 @@ struct RequestNode: View {
 
 struct RequestNode_Previews: PreviewProvider {
   static let req = CollectionItems.Item.authorize
-  static let mocks = MockStorage()
+  static let mocks = MockStorage.shared
   static let collectionModel = CollectionsViewModel(.sample)
   
   static var previews: some View {

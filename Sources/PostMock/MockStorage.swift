@@ -18,7 +18,7 @@ final class MockStorage: ObservableObject {
 
   var mocked: [RequestTemplate] { Array(mocks.keys) }
 
-  init() {
+  private init() {
     mocks = UserDefaults.mocks.decode(forKey: "postmanMocks") ?? [:]
   }
 
@@ -53,6 +53,10 @@ final class MockStorage: ObservableObject {
     } else {
       return nil
     }
+  }
+
+  func mock(for template: RequestTemplate) -> Mock? {
+    mocks[template]
   }
 
   func mock(for urlRequest: URLRequest) -> Mock? {

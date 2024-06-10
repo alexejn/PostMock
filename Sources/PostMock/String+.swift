@@ -8,6 +8,7 @@ import Foundation
 extension String {
   mutating func replacedPlaceholder(_ name: String, with value: String) {
     self = replacingOccurrences(of: "{{\(name)}}", with: value)
+    self = replacingOccurrences(of: ":\(name)", with: value)
   }
 
   mutating func appendSchemeIfDontHave(scheme: String?) {
@@ -42,6 +43,9 @@ extension String {
             return false
           }
         }
+      } else if templateComponent.first == ":" {
+        // Компонент является Path Variables
+        return true
       } else if templateComponent != urlComponent {
         // Если компоненты не совпадают и не являются переменными
         return false
