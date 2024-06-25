@@ -49,8 +49,9 @@ public struct Mock: Codable {
 
 
   public func isMathing(request: URLRequest) -> Bool {
-    guard let url = request.url,
-          let method = request.httpMethod  else { return false }
+    guard let urlString = request.url?.absoluteString.removedQuery,
+          var url = URL(string: urlString),
+          let method = request.httpMethod else { return false }
 
     let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
 

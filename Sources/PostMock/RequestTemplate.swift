@@ -15,7 +15,7 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
 
   public init(method: String, url: String, requestUID: String) {
     self.method = method
-    self.urlTemplate = URLTemplate(url: url)
+    self.urlTemplate = URLTemplate(url: url.removedQuery)
     self.requestUID = requestUID
   }
 
@@ -31,7 +31,8 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
   }
 
   public func isMathing(request: URLRequest) -> Bool {
-    guard var url = request.url,
+    guard let urlString = request.url?.absoluteString.removedQuery,
+          var url = URL(string: urlString),
           let method = request.httpMethod  else { return false }
 
     if let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId) {

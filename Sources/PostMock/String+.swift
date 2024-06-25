@@ -16,6 +16,13 @@ extension String {
     self = "\(scheme)://\(self)"
   }
 
+  var removedQuery: String {
+      if let range = self.range(of: "?") {
+          return String(self[..<range.lowerBound])
+      }
+      return self
+  }
+
   // swiftlint:disable all
   static func matchComponents(url: String, template: String) -> Bool {
     let templateComponents = template.components(separatedBy: "/")
