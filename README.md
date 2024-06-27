@@ -49,30 +49,30 @@ You also need [MockServer](https://learning.postman.com/docs/designing-and-devel
 
  
 ## Matching
-To match request from app to postman request, we can use templates or set specific header `x-posmock-request-id` to request.
+To match requests from the app to Postman requests, we can use templates or set a specific header `x-postmock-request-id` to the request.
 
 <img width="300" alt="image" src="https://github.com/alexejn/PostMock/assets/19667729/43948f10-51dc-4557-be19-0e5db9d378d3">
 
 
-You can provide some variables to make mock more specific
+You can provide some variables to make the mock more specific.
 
 <img width="300" alt="image" src="https://github.com/alexejn/PostMock/assets/19667729/71ca1321-743b-47c8-9c1e-aba542cef173">
 
 
-Some of this variables are global, and applied to any request contains the placeholder.
+Some of these variables are global and are applied to any request containing the placeholder.
 
 <img width="300" alt="image" src="https://github.com/alexejn/PostMock/assets/19667729/0f681a1a-2a7e-4203-b695-759eb71c9f8f)">
 
-We setup them in code 
+We set them up in the code:
 
 ```swift
  PostMock.shared.environment.set(key: "host",
                                  scope: .request,
                                  provider: { "https://dogapi.dog" })
 ```
-If you are not specified global variables like `{{host}}`, they will be matched to any string.
+If you do not specify global variables like `{{host}}`, they will be matched to any string.
 
-It's not a problem when you have only one host for requests.
+It’s not a problem when you have only one host for requests.
 
 ## In code mocking 
 You can mock some request in preview or tests. There is opportunity to set mock from code: 
