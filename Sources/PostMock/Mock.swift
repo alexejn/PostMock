@@ -50,7 +50,7 @@ public struct Mock: Codable {
 
   public func isMathing(request: URLRequest) -> Bool {
     guard let urlString = request.url?.absoluteString.removedQuery,
-          var url = URL(string: urlString),
+          let url = URL(string: urlString),
           let method = request.httpMethod else { return false }
 
     let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId)
@@ -69,5 +69,21 @@ public struct Mock: Codable {
                                         template: urlTemplate)
 
     return result
+  }
+
+  /// Set the mock, after it if PostMock.shared.mockIsEnabled = true, mock will be appliing.
+  public func set() {
+    MockStorage.shared.set(mock: self)
+  }
+
+  
+  public static func clearAll() {
+    MockStorage.shared.clearAll()
+  }
+}
+
+public extension Mock {
+  static func request(_ method: String, url: String) -> RequestTemplate {
+    .init(method: method, url: url)
   }
 }

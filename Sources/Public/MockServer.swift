@@ -17,6 +17,8 @@ public struct MockServer: Codable, Hashable {
 }
 
 public extension MockServer {
+  /// Host, without http://
+  /// example: 0997c312-c8ea-435a-8ffd-4a98f4214024.mock.pstmn.io
   init(host: String) {
     self.init(id: "", name: "", host: host, collectionUID: "")
   }

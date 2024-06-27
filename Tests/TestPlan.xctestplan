@@ -14,7 +14,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:PostMockSDK.xcodeproj",
+        "containerPath" : "container:PostMock.xcodeproj",
         "identifier" : "4FA35E912C13637C00040578",
         "name" : "PostMockTests"
       }

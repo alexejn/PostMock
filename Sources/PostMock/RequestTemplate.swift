@@ -13,7 +13,7 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
   public var description: String { "\(urlTemplate.url)" }
   public var actualDescription: String { "\(urlTemplateWithValues())" }
 
-  public init(method: String, url: String, requestUID: String) {
+  public init(method: String, url: String, requestUID: String = "") {
     self.method = method
     self.urlTemplate = URLTemplate(url: url.removedQuery)
     self.requestUID = requestUID
@@ -35,7 +35,7 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
           var url = URL(string: urlString),
           let method = request.httpMethod  else { return false }
 
-    if let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId) {
+    if let requestUID = request.value(forHTTPHeaderField: PostMock.Headers.xPostmanRequestId), !self.requestUID.isEmpty {
       return self.requestUID == requestUID
     }
 
@@ -52,5 +52,13 @@ public struct RequestTemplate: Hashable, CustomStringConvertible, Codable {
                                         template: urlTemplate)
 
     return result
+  }
+}
+
+public extension RequestTemplate {
+  func with(responseID: MockResponseID) -> Mock {
+    Mock(requestTemplate: self,
+         responseID: responseID,
+         placeholders: [:])
   }
 }

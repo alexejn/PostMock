@@ -23,7 +23,7 @@ struct ContentView: View {
 
 /// To generate api_key you can use this instauctions
 /// https://learning.postman.com/docs/developer/postman-api/authentication/
-extension PostMock.Config {
+public extension PostMock.Config {
   static var example = Self(apiKey: "<POSTMAN_API_KEY>",
                             workspaceID: "05ffed39-33b2-412f-ab4d-b234ad8539b7")
 }
